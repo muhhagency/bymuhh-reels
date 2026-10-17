@@ -1,0 +1,242 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "MuhhSans"; src: url("../../engine/fonts/sans.woff2") format("woff2"), url("../../engine/fonts/sans.ttf"); font-weight: 100 900; }
+@font-face { font-family: "MuhhMono"; src: url("../../engine/fonts/mono.woff2") format("woff2"), url("../../engine/fonts/mono.ttf"); }
+:root { --paper:#F4F1EA; --ink:#141414; --muted:#78746C; --line:#D6D1C6; --accent:#2B4BEE; --soft:#F7F5F0; --red:#CC3E32; --green:#268A52; --amber:#96640A; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.mono { font-family: "MuhhMono", "IBM Plex Mono", monospace; }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+#grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(20,20,20,0.035) 1px, transparent 1px); background-size: 6px 6px; }
+#chrome .bar { position: absolute; left: 96px; top: 180px; width: 834px; height: 4px; background: var(--line); }
+#chrome .fill { position: absolute; left: 0; top: 0; height: 4px; background: var(--ink); }
+#chrome .sig { position: absolute; left: 96px; top: 205px; font-size: 30px; color: var(--muted); }
+.layer { position: absolute; inset: 0; display: none; transform-origin: 540px 900px; }
+.card { position: absolute; background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 12px 12px 0 rgba(20,20,20,0.13); will-change: transform; }
+.ink { background: var(--ink); color: #fff; }
+.blue { background: var(--accent); color: #fff; border-color: var(--accent); }
+.big { font-weight: 800; letter-spacing: -2px; line-height: 1.02; }
+.label { font-size: 30px; letter-spacing: 1px; }
+.chip { display: inline-block; height: 64px; padding: 0 28px; border: 3px solid var(--line); border-radius: 32px; font-size: 32px; font-weight: 600; line-height: 58px; background: #fff; margin-right: 12px; }
+.chip.on { border-color: var(--accent); background: #E9ECFD; }
+.row { position: absolute; left: 0; right: 0; height: 78px; border-bottom: 2px solid var(--line); font-size: 32px; }
+.row span { position: absolute; top: 22px; }
+.st { height: 44px; padding: 0 18px; border-radius: 22px; font-size: 26px; font-weight: 650; line-height: 44px; top: 17px !important; }
+.over { background: #F9E4E2; color: var(--red); } .paid { background: #E2F1E8; color: var(--green); } .pend { background: #F8EBD2; color: var(--amber); }
+.cb { position: absolute; left: 26px; top: 24px; width: 32px; height: 32px; border: 3px solid var(--line); border-radius: 8px; background: #fff; }
+.cb.on { background: var(--accent); border-color: var(--accent); }
+.cb.on:after { content: ""; position: absolute; left: 8px; top: 2px; width: 8px; height: 16px; border: solid #fff; border-width: 0 4px 4px 0; transform: rotate(45deg); }
+.cursor { position: absolute; width: 56px; height: 70px; z-index: 40; }
+#head { position: absolute; left: 96px; top: 270px; width: 860px; font-size: 74px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.06; }
+#sub { position: absolute; left: 96px; right: 150px; top: 1360px; text-align: center; font-size: 62px; font-weight: 800; line-height: 1.15; letter-spacing: -0.5px; }
+#sub .w { display: inline-block; color: var(--ink); }
+#sub .w.now { color: #fff; background: var(--accent); border-radius: 10px; padding: 0 10px; margin: 0 -10px; }
+.mascot { position: absolute; }
+</style></head>
+<body><div id="stage">
+<div id="grain"></div>
+<div id="chrome"><div class="bar"><div class="fill" id="fill"></div></div><div class="sig mono">muhh_</div></div>
+<div id="head"></div>
+
+<!-- L0: "it's just a table" -->
+<div class="layer" id="L0">
+  <div class="card" id="chat" style="left:110px; top:640px; width:820px; padding:40px 44px;">
+    <div style="display:flex; align-items:center; gap:22px;">
+      <div style="width:84px;height:84px;border-radius:50%;background:#E9ECFD;display:grid;place-items:center;font-weight:800;font-size:32px;color:var(--accent)">PM</div>
+      <div><div style="font-size:34px;font-weight:750">Product manager</div><div class="mono" style="font-size:26px;color:var(--muted)">#design-review</div></div>
+    </div>
+    <div style="margin-top:30px;font-size:54px;font-weight:700;line-height:1.15" id="chatmsg">it's just a table, ship it</div>
+  </div>
+  <div class="mascot" id="m0" style="left:640px; top:1000px;"></div>
+  <div class="card" id="b0" style="left:770px; top:950px; padding:12px 26px; font-size:40px; font-weight:800; border-radius:20px">...</div>
+</div>
+
+<!-- L1: It's not. 3 jobs -->
+<div class="layer" id="L1">
+  <div class="card ink big" id="notcard" style="left:150px; top:560px; padding:40px 60px; font-size:150px;">It's not.</div>
+  <div class="card blue big" id="j1" style="left:110px; top:960px; padding:26px 44px; font-size:84px;">Find</div>
+  <div class="card big" id="j2" style="left:360px; top:1110px; padding:26px 44px; font-size:84px;">Compare</div>
+  <div class="card ink big" id="j3" style="left:640px; top:960px; padding:26px 44px; font-size:84px;">Act</div>
+</div>
+
+<!-- L2: find: 500 rows -->
+<div class="layer" id="L2">
+  <div class="card mono" id="f_tag" style="left:96px; top:480px; padding:16px 26px; font-size:34px; color:var(--accent); border-color:var(--accent)">01 · FIND</div>
+  <div class="card" id="f_table" style="left:96px; top:600px; width:888px; height:700px; overflow:hidden;"><div id="f_rows" style="position:absolute;left:0;right:0;top:0"></div></div>
+  <div class="card ink" id="f_count" style="left:560px; top:1210px; padding:20px 30px; font-size:44px; font-weight:800;"><span id="f_num">500</span> rows</div>
+</div>
+
+<!-- L3: filters on screen -->
+<div class="layer" id="L3">
+  <div class="card" id="bad" style="left:96px; top:500px; width:888px; padding:34px;">
+    <div class="mono label" style="color:var(--red)">BEHIND A BUTTON</div>
+    <div style="margin-top:20px; display:inline-block; padding:14px 30px; border:3px solid var(--line); border-radius:14px; font-size:36px; font-weight:650">Filters &#9662;</div>
+    <div id="strike" style="position:absolute; left:20px; top:112px; height:8px; background:var(--red); border-radius:4px; transform-origin:left center;"></div>
+  </div>
+  <div class="card" id="good" style="left:96px; top:760px; width:888px; padding:34px; overflow:hidden">
+    <div class="mono label" style="color:var(--accent)">ON THE SCREEN</div>
+    <div style="margin-top:20px; white-space:nowrap"><span class="chip" id="g1">Overdue</span><span class="chip">Owner: me</span><span class="chip">This week</span></div>
+    <div id="g_rows" style="position:relative; margin-top:24px; height:320px;"></div>
+  </div>
+  <svg class="cursor" id="cur3" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#141414" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+</div>
+
+<!-- L4: compare -->
+<div class="layer" id="L4">
+  <div class="card mono" id="c_tag" style="left:96px; top:480px; padding:16px 26px; font-size:34px; color:var(--accent); border-color:var(--accent)">02 · COMPARE</div>
+  <div class="card" id="c_card" style="left:96px; top:600px; width:888px; height:560px; overflow:hidden">
+    <div style="position:absolute; left:0; right:0; top:0; height:74px; background:var(--soft); border-bottom:2px solid var(--line)"></div>
+    <div class="mono" style="position:absolute; left:40px; top:22px; font-size:26px; color:var(--muted)">CUSTOMER</div>
+    <div class="mono" style="position:absolute; right:40px; top:22px; font-size:26px; color:var(--muted)">AMOUNT <span id="c_arrow" style="color:var(--accent)"></span></div>
+    <div id="c_rows" style="position:absolute; left:0; right:0; top:74px"></div>
+  </div>
+  <div class="card blue" id="c_note" style="left:430px; top:1100px; padding:18px 28px; font-size:40px; font-weight:800;">right-aligned, sorted</div>
+</div>
+
+<!-- L5: act -->
+<div class="layer" id="L5">
+  <div class="card mono" id="a_tag" style="left:96px; top:480px; padding:16px 26px; font-size:34px; color:var(--accent); border-color:var(--accent)">03 · ACT</div>
+  <div class="card" id="a_card" style="left:96px; top:600px; width:888px; height:560px; overflow:hidden">
+    <div id="a_bulk" style="position:absolute; left:24px; right:24px; top:20px; height:78px; background:var(--ink); color:#fff; border-radius:16px; font-size:34px; font-weight:700; display:flex; align-items:center; padding:0 28px; gap:40px"><span id="a_n">1 selected</span><span style="flex:1"></span><span>Export</span><span style="color:#FF9C90">Delete</span></div>
+    <div id="a_rows" style="position:absolute; left:0; right:0; top:120px"></div>
+  </div>
+  <div class="card ink" id="a_toast" style="left:150px; top:1190px; padding:22px 32px; font-size:36px; font-weight:700;">2 invoices exported <span style="color:#A8B6FF; margin-left:30px">Undo</span></div>
+  <svg class="cursor" id="cur5" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#141414" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+</div>
+
+<!-- L6: most do one -->
+<div class="layer" id="L6">
+  <div class="card" id="s1" style="left:110px; top:560px; padding:22px 36px; font-size:64px; font-weight:800;">Find</div>
+  <div class="card" id="s2" style="left:390px; top:560px; padding:22px 36px; font-size:64px; font-weight:800; color:#BDB8AE; border-color:#BDB8AE; text-decoration:line-through">Compare</div>
+  <div class="card" id="s3" style="left:770px; top:560px; padding:22px 36px; font-size:64px; font-weight:800; color:#BDB8AE; border-color:#BDB8AE; text-decoration:line-through">Act</div>
+  <div class="mascot" id="m6" style="left:380px; top:820px;"></div>
+  <div class="card ink big" id="s_txt" style="left:150px; top:1180px; padding:30px 44px; font-size:84px;">most do one.</div>
+</div>
+
+<!-- L7: outro -->
+<div class="layer" id="L7">
+  <div class="big" id="o1" style="position:absolute; left:96px; top:560px; font-size:140px;">Find.</div>
+  <div class="big" id="o2" style="position:absolute; left:96px; top:710px; font-size:140px;">Compare.</div>
+  <div class="big" id="o3" style="position:absolute; left:96px; top:860px; font-size:140px; color:var(--accent)">Act.</div>
+  <div id="o4" style="position:absolute; left:96px; top:1060px; font-size:62px; font-weight:750;">Design for all three.</div>
+  <div class="mono" id="o5" style="position:absolute; left:96px; top:1160px; font-size:36px; color:var(--muted)">follow for more on B2B SaaS design<span id="us" style="display:inline-block;width:44px;height:10px;background:var(--accent);margin-left:12px"></span></div>
+</div>
+
+<div id="sub"></div>
+</div>
+<script>
+const CFG = window.CFG || { mode: "text", lines: [] };
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const eo = t => 1 - Math.pow(1 - clamp(t), 3);
+const eio = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+const spring = t => { t = clamp(t, 0, 10); return 1 - Math.exp(-7 * t) * Math.cos(11 * t); };
+const pr = (x, a, d) => clamp((x - a) / d);
+const $ = id => document.getElementById(id);
+function pop(el, p, o = {}) { // spring a card in from a direction with rotation
+  const s = spring(p), dx = o.dx || 0, dy = o.dy == null ? 260 : o.dy, rot = o.rot || 0, sc = o.sc || 0.7;
+  el.style.opacity = clamp(p * 4);
+  el.style.transform = `translate(${(1 - s) * dx}px, ${(1 - s) * dy}px) rotate(${rot + (1 - s) * (o.spin || 8)}deg) scale(${lerp(sc, 1, s)})`;
+}
+function hide(el) { el.style.opacity = 0; }
+
+// pixel mascot (drawn in code)
+const PIX = ["..XXXXXXXX..", ".XXXXXXXXXX.", "XXWWXXXXWWXX", "XXWPXXXXWPXX", "XXXXXXXXXXXX", "XXXXKKKKXXXX", "XXXXXXXXXXXX", ".XXXXXXXXXX.", ".XX.X..X.XX."];
+function mascotSVG(size) {
+  let r = ""; const c = { X: "#2B4BEE", W: "#fff", P: "#141414", K: "#141414" };
+  PIX.forEach((row, y) => [...row].forEach((ch, x) => { if (c[ch]) r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${c[ch]}"/>`; }));
+  return `<svg width="${size * 12}" height="${size * 9 + size * 3}" viewBox="0 -3 12 12" shape-rendering="crispEdges">
+    <g class="armL"><rect x="-2" y="3" width="2" height="1" fill="#2B4BEE"/></g><g class="armR"><rect x="12" y="3" width="2" height="1" fill="#2B4BEE"/></g>${r}</svg>`;
+}
+$("m0").innerHTML = mascotSVG(14); $("m6").innerHTML = mascotSVG(26);
+
+// tables
+const NAMES = ["Acme Corp", "Northwind", "Fieldstone", "Globex", "Kestrel", "Lumen Labs", "Bluebird", "Harbor & Co", "Pinecrest", "Orbit Inc", "Meridian", "Copperleaf", "Westgate", "Juniper"];
+const STAT = ["Overdue", "Paid", "Overdue", "Pending", "Overdue", "Pending", "Overdue", "Paid", "Paid", "Overdue", "Pending", "Paid", "Paid", "Pending"];
+const cls = s => s === "Overdue" ? "over" : s === "Paid" ? "paid" : "pend";
+let fr = ""; for (let i = 0; i < 42; i++) { const k = i % 14; fr += `<div class="row" style="top:${i * 78}px"><span style="left:40px">${NAMES[k]}</span><span style="left:430px;width:200px;text-align:right">$${(((k * 733) % 4200) + 300).toLocaleString("en-US")}</span><span class="st ${cls(STAT[k])}" style="left:690px">${STAT[k]}</span></div>`; }
+$("f_rows").innerHTML = fr;
+const GR = [["Acme Corp", "Overdue"], ["Fieldstone", "Overdue"], ["Globex", "Pending"], ["Kestrel", "Overdue"], ["Lumen Labs", "Pending"]];
+$("g_rows").innerHTML = GR.map((r, i) => `<div class="row" id="gr${i}" style="top:${i * 66}px;height:66px;font-size:30px"><span style="left:6px;top:16px">${r[0]}</span><span class="st ${cls(r[1])}" style="left:560px;top:12px !important">${r[1]}</span></div>`).join("");
+const CR = [["Northwind", 860], ["Fieldstone", 4100], ["Acme Corp", 1200], ["Kestrel", 3300], ["Bluebird", 640]];
+const SORTED = [...CR.keys()].sort((a, b) => CR[b][1] - CR[a][1]);
+$("c_rows").innerHTML = CR.map((r, i) => `<div class="row" id="cr${i}" style="height:96px;font-size:38px"><span style="left:40px;top:28px">${r[0]}</span><span class="amt" id="ca${i}" style="top:26px;font-weight:700;font-variant-numeric:tabular-nums">$${r[1].toLocaleString("en-US")}</span></div>`).join("");
+const AR = [["Fieldstone", "$4,100"], ["Kestrel", "$3,300"], ["Acme Corp", "$1,200"], ["Bluebird", "$640"]];
+$("a_rows").innerHTML = AR.map((r, i) => `<div class="row" id="ar${i}" style="top:${i * 100}px;height:100px;font-size:38px"><div class="cb" id="acb${i}" style="top:32px"></div><span style="left:96px;top:28px">${r[0]}</span><span style="left:560px;top:28px;width:260px;text-align:right;font-weight:700">${r[1]}</span></div>`).join("");
+
+// timeline
+const LINES = CFG.lines; let acc = 0.15; const T0 = [];
+LINES.forEach(l => { T0.push(acc); acc += l.dur + (CFG.gap || 0.12); });
+const TOTAL = acc + (CFG.tail || 0.6);
+window.TOTAL = TOTAL;
+
+const ANIM = [
+  (p, t) => { pop($("chat"), pr(p, 0, 0.35), { dy: 500, rot: -3 }); pop($("m0"), pr(p, 0.4, 0.3), { dy: 200, spin: 0, sc: 0.3 }); pop($("b0"), pr(p, 0.5, 0.3), { dy: 60, rot: 4 });
+    $("m0").style.transform += ` translateY(${Math.sin(t * 9) * 6}px)`; },
+  (p, t) => { const s = spring(pr(p, 0, 0.25)); const n = $("notcard"); n.style.opacity = clamp(s * 4); n.style.transform = `scale(${lerp(1.8, 1, s)}) rotate(${-4 + Math.sin(pr(p, 0.04, 0.12) * Math.PI * 3) * 2}deg)`;
+    pop($("j1"), pr(p, 0.42, 0.3), { dx: -600, dy: 0, rot: -6 }); pop($("j2"), pr(p, 0.52, 0.3), { dy: 600, rot: 3 }); pop($("j3"), pr(p, 0.62, 0.3), { dx: 600, dy: 0, rot: 7 }); },
+  (p, t) => { pop($("f_tag"), pr(p, 0, 0.2), { dx: -300, dy: 0 }); pop($("f_table"), pr(p, 0.02, 0.25), { dy: 700, rot: 2 });
+    const sc = eio(pr(p, 0.08, 0.5)); $("f_rows").style.transform = `translateY(${-sc * 2400}px)`; $("f_rows").style.filter = `blur(${Math.sin(Math.PI * sc) * 5}px)`;
+    const k = eo(pr(p, 0.58, 0.25)); $("f_rows").querySelectorAll(".row").forEach((r, i) => { const keep = STAT[i % 14] === "Overdue"; r.style.opacity = keep ? 1 : 1 - 0.75 * k; r.style.background = keep && k > 0 ? `rgba(43,75,238,${0.08 * k})` : "transparent"; });
+    pop($("f_count"), pr(p, 0.2, 0.25), { dx: 300, dy: 0, rot: -4 }); const n = Math.round(lerp(500, 5, eo(pr(p, 0.6, 0.3)))); $("f_num").textContent = n; $("f_count").lastChild.textContent = n === 5 ? " that matter" : " rows"; },
+  (p, t) => { pop($("bad"), pr(p, 0, 0.25), { dx: -500, dy: 0, rot: -3 }); $("strike").style.width = (eo(pr(p, 0.25, 0.2)) * 300) + "px"; $("strike").style.transform = "rotate(-8deg)";
+    $("bad").style.opacity = 1 - eio(pr(p, 0.5, 0.2)) * 0.55; pop($("good"), pr(p, 0.2, 0.3), { dx: 500, dy: 0, rot: 2 });
+    const on = p > 0.62; $("g1").classList.toggle("on", on); const fp = eo(pr(p, 0.66, 0.2)); let y = 0;
+    GR.forEach((r, i) => { const keep = r[1] === "Overdue"; const el = $("gr" + i); el.style.opacity = keep ? 1 : 1 - fp; el.style.top = lerp(i * 66, keep ? y * 66 : i * 66, fp) + "px"; if (keep) y++; });
+    const cx = lerp(980, 210, eio(pr(p, 0.35, 0.25))), cy = lerp(1500, 880, eio(pr(p, 0.35, 0.25))); const c = $("cur3"); c.style.opacity = clamp(pr(p, 0.32, 0.05));
+    const pressed = p > 0.6 && p < 0.66 ? 0.85 : 1; c.style.transform = `translate(${cx}px, ${cy}px) scale(${pressed})`; c.style.left = "0"; c.style.top = "0"; },
+  (p, t) => { pop($("c_tag"), pr(p, 0, 0.2), { dx: -300, dy: 0 }); pop($("c_card"), pr(p, 0.02, 0.25), { dy: 700, rot: -2 });
+    const al = eio(pr(p, 0.32, 0.18)), so = eio(pr(p, 0.55, 0.22)); $("c_arrow").textContent = p > 0.53 ? "↓" : "";
+    CR.forEach((r, i) => { const a = $("ca" + i); const leftX = 430, rightX = 888 - 40 - a.offsetWidth; a.style.left = lerp(leftX, rightX, al) + "px";
+      const y = lerp(i * 96, SORTED.indexOf(i) * 96, so); const el = $("cr" + i); el.style.top = y + "px";
+      el.style.background = SORTED.indexOf(i) === 0 && so > 0.5 ? "rgba(43,75,238,0.08)" : "#fff"; el.style.transform = so > 0 && so < 1 ? `translateX(${Math.sin(Math.PI * so) * (SORTED.indexOf(i) - i) * 10}px)` : "none"; });
+    pop($("c_note"), pr(p, 0.8, 0.2), { dy: 120, rot: -3 }); },
+  (p, t) => { pop($("a_tag"), pr(p, 0, 0.2), { dx: -300, dy: 0 }); pop($("a_card"), pr(p, 0.02, 0.25), { dy: 700, rot: 2 });
+    const c1 = p > 0.28, c2 = p > 0.42; $("acb0").classList.toggle("on", c1); $("acb1").classList.toggle("on", c2);
+    $("ar0").style.background = c1 ? "#EEF1FE" : "#fff"; $("ar1").style.background = c2 ? "#EEF1FE" : "#fff";
+    const b = spring(pr(p, 0.3, 0.25)); $("a_bulk").style.opacity = p > 0.3 ? clamp(b * 3) : 0; $("a_bulk").style.transform = `translateY(${(1 - b) * -90}px)`; $("a_n").textContent = c2 ? "2 selected" : "1 selected";
+    $("a_rows").style.top = lerp(20, 120, eo(pr(p, 0.3, 0.2))) + "px";
+    pop($("a_toast"), pr(p, 0.78, 0.2), { dy: 200, rot: -2 });
+    const K = [[0, 1000, 1500], [0.18, 1000, 1500], [0.26, 150, 760], [0.36, 150, 760], [0.42, 150, 860], [0.5, 150, 860], [0.68, 640, 650], [1, 640, 650]];
+    let cx = K[0][1], cy = K[0][2]; for (let i = 0; i < K.length - 1; i++) { if (p >= K[i][0] && p <= K[i + 1][0]) { const k = eio((p - K[i][0]) / (K[i + 1][0] - K[i][0])); cx = lerp(K[i][1], K[i + 1][1], k); cy = lerp(K[i][2], K[i + 1][2], k); } }
+    if (p > 0.78) { cx = 640; cy = 650; } const c = $("cur5"); c.style.left = "0"; c.style.top = "0"; c.style.opacity = clamp(pr(p, 0.15, 0.05));
+    const pressed = (p > 0.27 && p < 0.31) || (p > 0.41 && p < 0.45) || (p > 0.7 && p < 0.74) ? 0.85 : 1; c.style.transform = `translate(${cx}px, ${cy}px) scale(${pressed})`; },
+  (p, t) => { pop($("s1"), pr(p, 0, 0.2), { dy: -300, rot: -4 }); pop($("s2"), pr(p, 0.08, 0.2), { dy: -300, rot: 3 }); pop($("s3"), pr(p, 0.16, 0.2), { dy: -300, rot: -2 });
+    pop($("m6"), pr(p, 0.15, 0.3), { dy: 400, spin: 0, sc: 0.5 }); const sh = Math.sin(t * 7); const m = $("m6").querySelector("svg");
+    m.querySelector(".armL").setAttribute("transform", `rotate(${-30 + sh * 20} 0 3.5)`); m.querySelector(".armR").setAttribute("transform", `rotate(${30 - sh * 20} 12 3.5)`);
+    pop($("s_txt"), pr(p, 0.45, 0.25), { dy: 300, rot: -3 }); },
+  (p, t) => { ["o1", "o2", "o3"].forEach((id, i) => { const s = spring(pr(p, i * 0.16, 0.35)); const el = $(id); el.style.opacity = clamp(s * 3); el.style.transform = `translateX(${(1 - s) * 200}px) scale(${lerp(1.3, 1, s)})`; el.style.filter = `blur(${(1 - clamp(s)) * 8}px)`; });
+    const a = eo(pr(p, 0.55, 0.2)), b = eo(pr(p, 0.68, 0.2)); $("o4").style.opacity = a; $("o4").style.transform = `translateY(${(1 - a) * 40}px)`; $("o5").style.opacity = b; $("us").style.opacity = Math.floor(t * 2) % 2 ? 1 : 0; }
+];
+
+function render(t) {
+  $("fill").style.width = (834 * clamp(t / TOTAL)) + "px";
+  let li = 0; T0.forEach((s, i) => { if (t >= s) li = i; });
+  const L = LINES[li]; const lt = t - T0[li]; const span = L.dur + (CFG.gap || 0.12); const p = clamp(lt / span);
+  for (let i = 0; i < 8; i++) $("L" + i).style.display = i === li ? "block" : "none";
+  const layer = $("L" + li);
+  // continuous slow push-in, and a whip exit at the end of each line (not the last)
+  const exitP = li < LINES.length - 1 ? eio(pr(lt, span - 0.22, 0.22)) : 0;
+  layer.style.transform = `translateX(${-exitP * 1200}px) scale(${1 + 0.05 * p}) rotate(${exitP * -4}deg)`;
+  layer.style.filter = exitP > 0 ? `blur(${exitP * 14}px)` : "none";
+  ANIM[li](p, t);
+  if (CFG.mode === "text") ["f_tag", "c_tag", "a_tag"].forEach(id => $(id).style.opacity = 0);
+  // head (text mode) or subtitles (voice mode)
+  const head = $("head"), sub = $("sub");
+  if (CFG.mode === "text" && L.card) {
+    const s = spring(pr(lt, 0, 0.4)); head.innerHTML = L.card; head.style.opacity = clamp(s * 3) * (1 - exitP); head.style.transform = `translateY(${(1 - s) * -60}px)`;
+  } else { head.style.opacity = 0; }
+  if (CFG.mode === "voice") {
+    const words = L.text.split(" "); const chunks = []; let cur = [];
+    words.forEach(w => { cur.push(w); if (cur.length >= 4 || /[.,:]$/.test(w)) { chunks.push(cur); cur = []; } }); if (cur.length) chunks.push(cur);
+    const tot = words.join("").length; const prog = clamp(lt / L.dur); let accw = 0, show = chunks[chunks.length - 1], nowW = -1, gi = 0;
+    for (const ch of chunks) { const a = accw / tot; const len = ch.join("").length; if (prog < (accw + len) / tot || ch === chunks[chunks.length - 1]) { show = ch; let w0 = accw; ch.forEach((w, k) => { if (prog >= w0 / tot && prog < (w0 + w.length) / tot) nowW = k; w0 += w.length; }); break; } accw += len; }
+    sub.innerHTML = show.map((w, k) => `<span class="w ${k === nowW ? "now" : ""}">${w}</span>`).join(" ");
+    sub.style.opacity = 1 - exitP;
+  } else { sub.style.opacity = 0; }
+}
+window.render = render;
+render(0);
+</script></body></html>
