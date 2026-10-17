@@ -8,6 +8,7 @@ Files in `videos/` are public. Buffer downloads them from:
 ## Style: card-collage motion
 
 - Paper background, black ink, accent blue #2B4BEE, red #CC3E32, green #268A52.
+- The "muhh_" signature is always accent blue #2B4BEE and bold (Inter 800), in every video and image. Never grey, never in the mono font, never thin.
 - Every beat is a layer of cards that spring in, keep moving, then whip out. There is a new visual every 1 to 2 seconds.
 - UI is recreated in code, and it works: rows filter, numbers sort, checkboxes tick, and a cursor clicks with a press.
 - A pixel mascot drawn in code reacts on the hook and the "problem" beat.

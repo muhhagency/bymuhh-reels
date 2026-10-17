@@ -12,7 +12,7 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
 #grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(20,20,20,0.035) 1px, transparent 1px); background-size: 6px 6px; }
 #chrome .bar { position: absolute; left: 96px; top: 180px; width: 834px; height: 4px; background: var(--line); }
 #chrome .fill { position: absolute; left: 0; top: 0; height: 4px; background: var(--ink); }
-#chrome .sig { position: absolute; left: 96px; top: 205px; font-size: 30px; color: var(--muted); }
+#chrome .sig { position: absolute; left: 96px; top: 200px; font-family: "MuhhSans", "Inter", sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -1px; color: var(--accent); }
 .layer { position: absolute; inset: 0; display: none; transform-origin: 540px 900px; }
 .card { position: absolute; background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 12px 12px 0 rgba(20,20,20,0.13); will-change: transform; }
 .ink { background: var(--ink); color: #fff; }
@@ -37,7 +37,7 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
 </style></head>
 <body><div id="stage">
 <div id="grain"></div>
-<div id="chrome"><div class="bar"><div class="fill" id="fill"></div></div><div class="sig mono">muhh_</div></div>
+<div id="chrome"><div class="bar"><div class="fill" id="fill"></div></div><div class="sig">muhh_</div></div>
 <div id="head"></div>
 
 <!-- L0: "it's just a table" -->
