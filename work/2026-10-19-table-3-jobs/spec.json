@@ -1,0 +1,38 @@
+{
+ "slug": "2026-10-19-table-3-jobs-v2",
+ "voice": "am_michael",
+ "lines": [
+  {
+   "text": "Your PM says it's just a table.",
+   "card": "Your PM: &ldquo;it's just a table.&rdquo;"
+  },
+  {
+   "text": "It's not. Every data table has three jobs.",
+   "card": "Every table has<br>3 jobs."
+  },
+  {
+   "text": "Job one: find. People need the five rows that matter, not all five hundred.",
+   "card": "Job 1: find the 5 rows<br>that matter."
+  },
+  {
+   "text": "So put the filters on the screen, not behind a button.",
+   "card": "Filters on screen,<br>not behind a button."
+  },
+  {
+   "text": "Job two: compare. Sort by the number that matters, and line the numbers up on the right.",
+   "card": "Job 2: compare.<br>Numbers right, sorted."
+  },
+  {
+   "text": "Job three: act. Pick the rows, and the actions show up right there.",
+   "card": "Job 3: act.<br>Actions on the selection."
+  },
+  {
+   "text": "Most tables only do one of the three.",
+   "card": "Most tables do<br>one of the three."
+  },
+  {
+   "text": "Find. Compare. Act. Design for all three.",
+   "card": ""
+  }
+ ]
+}

@@ -11,7 +11,8 @@ Files in `videos/` are public. Buffer downloads them from:
 - The "muhh_" signature matches the muhh.design logo in every video and image: bold Inter (800), "muhh" in ink #141414 and only the "_" in accent blue #2B4BEE. Never grey, never all blue, never in the mono font, never thin.
 - Every beat is a layer of cards that spring in, keep moving, then whip out. There is a new visual every 1 to 2 seconds.
 - UI is recreated in code, and it works: rows filter, numbers sort, checkboxes tick, and a cursor clicks with a press.
-- A pixel mascot drawn in code reacts on the hook and the "problem" beat.
+- The mascot is Under_ (engine/mascot.js), and it is the only character ever used: the blue underscore from the muhh_ logo, alive. Its bar matches the logo underscore (3.9 : 1, square corners, #2B4BEE) and it has cursor-shaped ink eyes on top. It has no limbs and no pixel style. Never draw any other mascot, and never anything that resembles another brand's character.
+  Poses: idle, shock (the bad screen), shrug ("most teams..."), point (look here), cheer (the fix works), wave (follow), underline (it stretches under the key word, the signature move, used in the outro). Use it on the hook or the problem beat and in the outro. Draw it every frame with `el.innerHTML = under({pose, t, scale, len})`.
 - No real screenshots, memes, photos, logos or watermarks. No em dashes anywhere.
 - Text stays inside x 96 to 984 and y 250 to 1500. Voice captions sit at y 1360.
 - Length is 22 to 30 seconds and 7 to 9 narration lines. Line 1 is the hook (under 3 s) and the last line is the payoff with a follow CTA.
