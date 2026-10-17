@@ -175,7 +175,9 @@ def chrome(d, sig, gt, total, idx, n):
     d.rectangle([SAFE_L, 180, SAFE_R, 184], fill=LINE)
     d.rectangle([SAFE_L, 180, SAFE_L + int((SAFE_R - SAFE_L) * clamp(gt / total)), 184], fill=INK)
     f = font("mono", 30, 400)
-    d.text((SAFE_L, 198), sig.lower() + "_", font=font("sans", 40, 800), fill=ACCENT)  # muhh_ is always blue and bold
+    fs = font("sans", 40, 800)  # logo: bold ink "muhh", blue underscore (matches muhh.design)
+    d.text((SAFE_L, 198), sig.lower(), font=fs, fill=INK)
+    d.text((SAFE_L + fs.getlength(sig.lower()) + 1, 198), "_", font=fs, fill=ACCENT)
     lab = f"{idx + 1:02d}/{n:02d}"
     d.text((SAFE_R - f.getlength(lab), 205), lab, font=f, fill=MUTED)
 
