@@ -4,13 +4,13 @@
 <style>
 @font-face { font-family: "MuhhSans"; src: url("../../engine/fonts/sans.woff2") format("woff2"); font-weight: 100 900; }
 @font-face { font-family: "MuhhMono"; src: url("../../engine/fonts/mono.woff2") format("woff2"); }
-:root { --paper:#F4F1EA; --ink:#141414; --muted:#78746C; --line:#D6D1C6; --accent:#2B4BEE; --soft:#F7F5F0; --red:#CC3E32; --green:#268A52; --amber:#96640A; }
+:root { --paper:#f7f7f5; --white:#ffffff; --ink:#0e0e0c; --ink60:#676765; --ink40:#70706e; --muted:#676765; --line:#d2d2d0; --accent:#0b4af1; --tint:rgba(11,74,241,0.10); --soft:#f7f7f5; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
 body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
 .mono { font-family: "MuhhMono", "IBM Plex Mono", monospace; }
 #stage { position: absolute; inset: 0; overflow: hidden; }
-#grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(20,20,20,0.045) 1.2px, transparent 1.2px); background-size: 8px 8px; }
+#grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(14,14,12,0.045) 1.2px, transparent 1.2px); background-size: 8px 8px; }
 
 /* chrome: progress, logo, section label, stakes counter */
 #bar { position: absolute; left: 96px; top: 176px; width: 888px; height: 4px; background: var(--line); }
@@ -20,7 +20,7 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
 #section { position: absolute; left: 96px; top: 262px; font-size: 28px; color: var(--muted); letter-spacing: 0.5px; }
 #meter { position: absolute; right: 96px; top: 196px; text-align: right; }
 #meter .k { font-size: 24px; color: var(--muted); letter-spacing: 1px; }
-#meter .v { font-size: 46px; font-weight: 700; color: var(--red); line-height: 1.1; display: inline-block; transform-origin: right center; }
+#meter .v { font-size: 46px; font-weight: 700; color: var(--accent); line-height: 1.1; display: inline-block; transform-origin: right center; }
 #meter .n { font-size: 20px; color: var(--muted); }
 
 /* kinetic headline = the narration */
@@ -29,24 +29,24 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
 #head .w.key { color: var(--accent); }
 
 .layer { position: absolute; inset: 0; display: none; transform-origin: 540px 950px; }
-.card { position: absolute; background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 12px 12px 0 rgba(20,20,20,0.13); }
+.card { position: absolute; background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 12px 12px 0 rgba(14,14,12,0.13); }
 .ink { background: var(--ink); color: #fff; }
 .blue { background: var(--accent); color: #fff; border-color: var(--accent); }
 .big { font-weight: 800; letter-spacing: -2px; line-height: 1.02; }
 .label { font-size: 28px; letter-spacing: 1px; }
 .chip { display: inline-block; height: 64px; padding: 0 28px; border: 3px solid var(--line); border-radius: 32px; font-size: 32px; font-weight: 600; line-height: 58px; background: #fff; margin-right: 12px; }
-.chip.on { border-color: var(--accent); background: #E9ECFD; }
+.chip.on { border-color: var(--accent); background: var(--tint); color: var(--accent); }
 .row { position: absolute; left: 0; right: 0; height: 78px; border-bottom: 2px solid var(--line); font-size: 32px; }
 .row span { position: absolute; top: 22px; }
 .st { height: 44px; padding: 0 18px; border-radius: 22px; font-size: 26px; font-weight: 650; line-height: 44px; top: 17px !important; }
-.over { background: #F9E4E2; color: var(--red); } .paid { background: #E2F1E8; color: var(--green); } .pend { background: #F8EBD2; color: var(--amber); }
+.over { background: var(--ink); color: var(--white); } .paid { background: var(--white); color: var(--ink60); box-shadow: inset 0 0 0 2px var(--line); } .pend { background: var(--paper); color: var(--ink60); box-shadow: inset 0 0 0 2px var(--line); }
 .cb { position: absolute; left: 26px; top: 24px; width: 32px; height: 32px; border: 3px solid var(--line); border-radius: 8px; background: #fff; }
 .cb.on { background: var(--accent); border-color: var(--accent); }
 .cb.on:after { content: ""; position: absolute; left: 8px; top: 2px; width: 8px; height: 16px; border: solid #fff; border-width: 0 4px 4px 0; transform: rotate(45deg); }
 .cursor { position: absolute; left: 0; top: 0; width: 56px; height: 70px; z-index: 40; }
-.redbig { color: var(--red); font-weight: 800; letter-spacing: -6px; line-height: 0.9; }
+.redbig { color: var(--white); font-weight: 800; letter-spacing: -6px; line-height: 0.9; }
 #narr { position: absolute; left: 321px; top: 1268px; z-index: 30; }
-#plus { position: absolute; z-index: 31; font-size: 54px; font-weight: 800; color: var(--red); }
+#plus { position: absolute; z-index: 31; font-size: 54px; font-weight: 800; color: var(--accent); }
 </style></head>
 <body><div id="stage">
 <div id="grain"></div>
@@ -62,9 +62,9 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
     <div style="position:absolute;left:0;right:0;top:0;height:60px;background:var(--soft);border-bottom:2px solid var(--line)"></div>
     <div id="h_rows" style="position:absolute;left:0;right:0;top:60px"></div>
   </div>
-  <div class="card ink" id="h_big" style="left:470px; top:760px; padding:26px 40px 30px; transform:rotate(3deg)">
-    <div class="redbig" style="font-size:220px; color:#FF6B5E">6h</div>
-    <div class="mono" style="font-size:30px; color:#E9E6DF; margin-top:6px">lost every week</div>
+  <div class="card blue" id="h_big" style="left:470px; top:760px; padding:26px 40px 30px; transform:rotate(3deg)">
+    <div class="redbig" style="font-size:220px">6h</div>
+    <div class="mono" style="font-size:30px; color:#ffffff; opacity:0.85; margin-top:6px">lost every week</div>
   </div>
 </div>
 
@@ -72,7 +72,7 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
 <div class="layer" id="L1">
   <div class="card" id="chat" style="left:110px; top:640px; width:820px; padding:40px 44px;">
     <div style="display:flex; align-items:center; gap:22px;">
-      <div style="width:84px;height:84px;border-radius:50%;background:#E9ECFD;display:grid;place-items:center;font-weight:800;font-size:32px;color:var(--accent)">PM</div>
+      <div style="width:84px;height:84px;border-radius:50%;background:var(--tint);display:grid;place-items:center;font-weight:800;font-size:32px;color:var(--accent)">PM</div>
       <div><div style="font-size:34px;font-weight:750">Product manager</div><div class="mono" style="font-size:26px;color:var(--muted)">#design-review</div></div>
     </div>
     <div style="margin-top:30px;font-size:54px;font-weight:700;line-height:1.15">it's just a table, ship it</div>
@@ -104,7 +104,7 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
     <div style="margin-top:20px; white-space:nowrap"><span class="chip" id="g1">Overdue</span><span class="chip">Owner: me</span><span class="chip">This week</span></div>
     <div id="g_rows" style="position:relative; margin-top:24px; height:330px;"></div>
   </div>
-  <svg class="cursor" id="cur4" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#141414" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+  <svg class="cursor" id="cur4" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#0e0e0c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
 </div>
 
 <!-- L5: compare -->
@@ -120,11 +120,11 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
 <!-- L6: act -->
 <div class="layer" id="L6">
   <div class="card" id="a_card" style="left:96px; top:620px; width:888px; height:540px; overflow:hidden">
-    <div id="a_bulk" style="position:absolute; left:24px; right:24px; top:20px; height:78px; background:var(--ink); color:#fff; border-radius:16px; font-size:34px; font-weight:700; display:flex; align-items:center; padding:0 28px; gap:40px"><span id="a_n">1 selected</span><span style="flex:1"></span><span>Export</span><span style="color:#FF9C90">Delete</span></div>
+    <div id="a_bulk" style="position:absolute; left:24px; right:24px; top:20px; height:78px; background:var(--ink); color:#fff; border-radius:16px; font-size:34px; font-weight:700; display:flex; align-items:center; padding:0 28px; gap:40px"><span id="a_n">1 selected</span><span style="flex:1"></span><span>Export</span><span style="opacity:0.7">Delete</span></div>
     <div id="a_menu" class="card" style="right:30px; top:24px; padding:10px 22px; font-size:34px; font-weight:800; border-radius:14px; z-index:3">&#8943;</div>
     <div id="a_rows" style="position:absolute; left:0; right:0; top:120px"></div>
   </div>
-  <svg class="cursor" id="cur6" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#141414" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+  <svg class="cursor" id="cur6" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#0e0e0c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
 </div>
 
 <!-- L7: most do one, the total -->
@@ -132,9 +132,9 @@ body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-
   <div class="card" id="s1" style="left:110px; top:640px; padding:22px 36px; font-size:64px; font-weight:800;">Find</div>
   <div class="card" id="s2" style="left:390px; top:640px; padding:22px 36px; font-size:64px; font-weight:800; color:#BDB8AE; border-color:#BDB8AE; text-decoration:line-through">Compare</div>
   <div class="card" id="s3" style="left:770px; top:640px; padding:22px 36px; font-size:64px; font-weight:800; color:#BDB8AE; border-color:#BDB8AE; text-decoration:line-through">Act</div>
-  <div class="card ink" id="t_big" style="left:200px; top:830px; padding:24px 48px 30px; transform:rotate(-2deg)">
-    <div class="redbig" style="font-size:190px; color:#FF6B5E" id="t_num">6h 00m</div>
-    <div class="mono" style="font-size:30px; color:#E9E6DF; margin-top:6px">per person, every week</div>
+  <div class="card blue" id="t_big" style="left:200px; top:830px; padding:24px 48px 30px; transform:rotate(-2deg)">
+    <div class="redbig" style="font-size:190px" id="t_num">6h 00m</div>
+    <div class="mono" style="font-size:30px; color:#ffffff; opacity:0.85; margin-top:6px">per person, every week</div>
   </div>
 </div>
 
@@ -220,13 +220,13 @@ const ANIM = [
   (p, t) => { pop($("c_card"), pr(p, 0, 0.2), { dy: 700, rot: -2 });
     const al = eio(pr(p, 0.5, 0.15)), so = eio(pr(p, 0.68, 0.18)); $("c_arrow").textContent = p > 0.66 ? "↓" : "";
     CR.forEach((r, i) => { const a = $("ca" + i); const leftX = 360, rightX = 888 - 40 - a.offsetWidth; a.style.left = lerp(leftX, rightX, al) + "px";
-      a.style.color = p > 0.2 && al < 0.05 ? "var(--red)" : "var(--ink)";
+      a.style.color = p > 0.2 && al < 0.05 ? "var(--ink40)" : "var(--ink)";
       const y = lerp(i * 96, SORTED.indexOf(i) * 96, so); const el = $("cr" + i); el.style.top = y + "px";
-      el.style.background = SORTED.indexOf(i) === 0 && so > 0.5 ? "rgba(43,75,238,0.08)" : "#fff"; }); },
+      el.style.background = SORTED.indexOf(i) === 0 && so > 0.5 ? "var(--tint)" : "#fff"; }); },
   (p, t) => { pop($("a_card"), pr(p, 0, 0.2), { dy: 700, rot: 2 });
     const sel = p > 0.62, c1 = p > 0.62, c2 = p > 0.7; $("acb0").classList.toggle("on", c1); $("acb1").classList.toggle("on", c2);
-    $("ar0").style.background = c1 ? "#EEF1FE" : "#fff"; $("ar1").style.background = c2 ? "#EEF1FE" : "#fff";
-    $("a_menu").style.opacity = sel ? 0 : 1; $("a_menu").style.borderColor = p > 0.25 && p < 0.6 ? "var(--red)" : "var(--ink)";
+    $("ar0").style.background = c1 ? "var(--tint)" : "#fff"; $("ar1").style.background = c2 ? "var(--tint)" : "#fff";
+    $("a_menu").style.opacity = sel ? 0 : 1; $("a_menu").style.borderColor = p > 0.25 && p < 0.6 ? "var(--accent)" : "var(--ink)"; $("a_menu").style.color = p > 0.25 && p < 0.6 ? "var(--accent)" : "var(--ink)";
     const b = spring(pr(p, 0.64, 0.2)); $("a_bulk").style.opacity = p > 0.64 ? clamp(b * 3) : 0; $("a_bulk").style.transform = `translateY(${(1 - b) * -90}px)`; $("a_n").textContent = c2 ? "2 selected" : "1 selected";
     $("a_rows").style.top = lerp(20, 120, eo(pr(p, 0.64, 0.15))) + "px";
     const K = [[0, 1000, 1400], [0.15, 1000, 1400], [0.3, 840, 660], [0.5, 840, 660], [0.6, 150, 680], [0.68, 150, 680], [0.74, 150, 780], [1, 150, 780]];

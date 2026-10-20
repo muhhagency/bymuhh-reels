@@ -27,11 +27,11 @@ import json, math, os, shutil, subprocess, sys, tempfile
 from PIL import Image, ImageDraw, ImageFont
 
 W, H, FPS = 1080, 1920, 30
-PAPER = (244, 241, 234)
-INK = (20, 20, 20)
-MUTED = (120, 116, 108)
-LINE = (214, 209, 198)
-ACCENT = (43, 75, 238)
+PAPER = (247, 247, 245)   # muhh_ brand tokens
+INK = (14, 14, 12)
+MUTED = (103, 103, 101)
+LINE = (210, 210, 208)
+ACCENT = (11, 74, 241)
 SAFE_L, SAFE_R, SAFE_T, SAFE_B = 96, 1080 - 150, 250, 1920 - 420
 
 FONT_DIR = "."
@@ -293,9 +293,9 @@ def scene_outro(d, s, t, gt):
         d.text((SAFE_L, bottom + 70 + i * 52), ln, font=fm, fill=blend(MUTED, PAPER, a))
 
 WHITE = (255, 255, 255)
-SOFT = (247, 245, 240)
-RED = (204, 62, 50)
-GREEN = (38, 138, 82)
+SOFT = (247, 247, 245)
+RED = INK          # no red in the muhh_ palette: danger and overdue use ink
+GREEN = MUTED      # no green in the muhh_ palette: success uses ink-60
 BW = 680  # base width every screen is drawn at, then scaled up
 
 def tint(c, a):

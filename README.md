@@ -10,15 +10,15 @@ Files in `videos/` are public. Buffer downloads them from:
 The template is `examples/2026-10-21-table-3-jobs-v3/` (page.html + spec.json). Every reel is built from it.
 
 Look
-- Paper background, black ink, accent blue #2B4BEE, red #CC3E32, green #268A52. Fonts: Inter and IBM Plex Mono only.
-- The "muhh_" signature matches the muhh.design logo in every video and image: bold Inter (800), "muhh" in ink #141414 and only the "_" in accent blue #2B4BEE. Never grey, never all blue, never in the mono font, never thin.
+- Colors are the muhh_ brand tokens only (from the muhh_socials Figma file): paper #f7f7f5, white #ffffff, ink #0e0e0c, ink-60 #676765, ink-40 #70706e, rule #d2d2d0, accent #0b4af1 (tints of the accent are fine). No red, green, amber or any other color, including for warnings, stakes numbers and status pills: stakes and highlights use the accent, bad or overdue states use ink, neutral states use ink-60 with a rule outline. Fonts: Inter and IBM Plex Mono only.
+- The "muhh_" signature matches the muhh.design logo in every video and image: bold Inter (800), "muhh" in ink #0e0e0c and only the "_" in accent blue #0b4af1. Never grey, never all blue, never in the mono font, never thin.
 - The mascot is Under_ (engine/mascot.js), and it is the only character ever used: the blue underscore from the muhh_ logo, alive (3.9 : 1 bar, square corners, cursor-shaped ink eyes on top, no limbs, no pixel style). Never draw any other mascot, and never anything that resembles another brand's character.
 - No real screenshots, memes, photos, logos or watermarks. No em dashes anywhere.
 
 Structure (what makes people stay)
-1. Frame 0 is the whole hook. The first line is shown in full at 0:00 with a stakes prop (a big red number card) already on screen, and the voice starts at 0.0 s ("lead": 0). No empty frames, no pop-in before the claim.
+1. Frame 0 is the whole hook. The first line is shown in full at 0:00 with a stakes prop (a big accent-blue number card) already on screen, and the voice starts at 0.0 s ("lead": 0). No empty frames, no pop-in before the claim.
 2. The narration is the headline. Each phrase appears word by word in big type (86 px) near the top; key words are wrapped in *asterisks* in spec.json and show in blue. No small captions.
-3. A stakes meter top right (mono, red, marked "illustrative" unless sourced), for example TIME LOST / WEEK, CLICKS WASTED, TICKETS / MONTH. It climbs on every problem beat ("cost": [where in the line, amount]) and the costs add up to the number promised in the hook.
+3. A stakes meter top right (mono, accent blue, marked "illustrative" unless sourced), for example TIME LOST / WEEK, CLICKS WASTED, TICKETS / MONTH. It climbs on every problem beat ("cost": [where in the line, amount]) and the costs add up to the number promised in the hook.
 4. A section label under the logo: "// 01 of 03 / find". Numbered parts make people stay to the end.
 5. Under_ narrates from the bottom of the screen the whole time (POSE per line), and jumps into shock whenever the meter goes up. In the outro it does its underline move under the last key word.
 6. Every point shows the problem first (it costs, the meter climbs), then the fix working in recreated UI: rows filter, numbers sort, checkboxes tick, a cursor clicks with a press. One big prop per beat; a new visual every 1 to 2 seconds.

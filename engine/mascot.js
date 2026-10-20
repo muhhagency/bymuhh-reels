@@ -1,5 +1,5 @@
 // Under_: the official muhh_ mascot. The blue underscore from the muhh_ logo, alive.
-// Proportions match the logo underscore (Inter 800): 3.9 : 1, square corners, accent blue #2B4BEE.
+// Proportions match the logo underscore (Inter 800): 3.9 : 1, square corners, accent blue #0b4af1.
 // Cursor-shaped ink eyes stand on top of the bar. No limbs: it acts with hops, squash, tilt and small marks.
 // usage: el.innerHTML = under({pose, t, scale, len})
 //   pose: idle | cheer | shrug | point | shock | wave | underline
@@ -7,7 +7,7 @@
 //   len: bar length in px at scale 1, for "underline" (it stretches under a word)
 // The svg is (bar width + 120) x 190 at scale 1; the bar starts at x = 30 and its bottom sits at y = 150.
 (function () {
-  const BLUE = "#2B4BEE", INK = "#141414", PAPER = "#F4F1EA";
+  const BLUE = "#0b4af1", INK = "#0e0e0c", PAPER = "#f7f7f5";   // muhh_ brand tokens: accent, ink, paper
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   window.under = function ({ pose = "idle", t = 0, scale = 1, len = 170 } = {}) {
     const W = pose === "underline" ? len : 172, H = 44;
