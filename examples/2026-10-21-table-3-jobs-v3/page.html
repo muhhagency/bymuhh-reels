@@ -1,0 +1,280 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<script src="../../engine/mascot.js"></script>
+<style>
+@font-face { font-family: "MuhhSans"; src: url("../../engine/fonts/sans.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "MuhhMono"; src: url("../../engine/fonts/mono.woff2") format("woff2"); }
+:root { --paper:#F4F1EA; --ink:#141414; --muted:#78746C; --line:#D6D1C6; --accent:#2B4BEE; --soft:#F7F5F0; --red:#CC3E32; --green:#268A52; --amber:#96640A; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.mono { font-family: "MuhhMono", "IBM Plex Mono", monospace; }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+#grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(20,20,20,0.045) 1.2px, transparent 1.2px); background-size: 8px 8px; }
+
+/* chrome: progress, logo, section label, stakes counter */
+#bar { position: absolute; left: 96px; top: 176px; width: 888px; height: 4px; background: var(--line); }
+#fill { position: absolute; left: 0; top: 0; height: 4px; background: var(--ink); }
+#sig { position: absolute; left: 96px; top: 196px; font-size: 40px; font-weight: 800; letter-spacing: -1.5px; }
+#sig b { color: var(--accent); }
+#section { position: absolute; left: 96px; top: 262px; font-size: 28px; color: var(--muted); letter-spacing: 0.5px; }
+#meter { position: absolute; right: 96px; top: 196px; text-align: right; }
+#meter .k { font-size: 24px; color: var(--muted); letter-spacing: 1px; }
+#meter .v { font-size: 46px; font-weight: 700; color: var(--red); line-height: 1.1; display: inline-block; transform-origin: right center; }
+#meter .n { font-size: 20px; color: var(--muted); }
+
+/* kinetic headline = the narration */
+#head { position: absolute; left: 96px; top: 318px; width: 888px; font-size: 86px; font-weight: 800; letter-spacing: -2.5px; line-height: 1.04; }
+#head .w { display: inline-block; margin-right: 0.24em; will-change: transform, opacity; }
+#head .w.key { color: var(--accent); }
+
+.layer { position: absolute; inset: 0; display: none; transform-origin: 540px 950px; }
+.card { position: absolute; background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 12px 12px 0 rgba(20,20,20,0.13); }
+.ink { background: var(--ink); color: #fff; }
+.blue { background: var(--accent); color: #fff; border-color: var(--accent); }
+.big { font-weight: 800; letter-spacing: -2px; line-height: 1.02; }
+.label { font-size: 28px; letter-spacing: 1px; }
+.chip { display: inline-block; height: 64px; padding: 0 28px; border: 3px solid var(--line); border-radius: 32px; font-size: 32px; font-weight: 600; line-height: 58px; background: #fff; margin-right: 12px; }
+.chip.on { border-color: var(--accent); background: #E9ECFD; }
+.row { position: absolute; left: 0; right: 0; height: 78px; border-bottom: 2px solid var(--line); font-size: 32px; }
+.row span { position: absolute; top: 22px; }
+.st { height: 44px; padding: 0 18px; border-radius: 22px; font-size: 26px; font-weight: 650; line-height: 44px; top: 17px !important; }
+.over { background: #F9E4E2; color: var(--red); } .paid { background: #E2F1E8; color: var(--green); } .pend { background: #F8EBD2; color: var(--amber); }
+.cb { position: absolute; left: 26px; top: 24px; width: 32px; height: 32px; border: 3px solid var(--line); border-radius: 8px; background: #fff; }
+.cb.on { background: var(--accent); border-color: var(--accent); }
+.cb.on:after { content: ""; position: absolute; left: 8px; top: 2px; width: 8px; height: 16px; border: solid #fff; border-width: 0 4px 4px 0; transform: rotate(45deg); }
+.cursor { position: absolute; left: 0; top: 0; width: 56px; height: 70px; z-index: 40; }
+.redbig { color: var(--red); font-weight: 800; letter-spacing: -6px; line-height: 0.9; }
+#narr { position: absolute; left: 321px; top: 1268px; z-index: 30; }
+#plus { position: absolute; z-index: 31; font-size: 54px; font-weight: 800; color: var(--red); }
+</style></head>
+<body><div id="stage">
+<div id="grain"></div>
+<div id="bar"><div id="fill"></div></div>
+<div id="sig">muhh<b>_</b></div>
+<div id="section" class="mono"></div>
+<div id="meter" class="mono"><div class="k">TIME LOST / WEEK</div><div class="v" id="mv">0h 00m</div><div class="n">illustrative</div></div>
+<div id="head"></div>
+
+<!-- L0 hook: the stakes, fully visible at frame 0 -->
+<div class="layer" id="L0">
+  <div class="card" id="h_tbl" style="left:120px; top:640px; width:600px; height:330px; overflow:hidden; transform:rotate(-4deg)">
+    <div style="position:absolute;left:0;right:0;top:0;height:60px;background:var(--soft);border-bottom:2px solid var(--line)"></div>
+    <div id="h_rows" style="position:absolute;left:0;right:0;top:60px"></div>
+  </div>
+  <div class="card ink" id="h_big" style="left:470px; top:760px; padding:26px 40px 30px; transform:rotate(3deg)">
+    <div class="redbig" style="font-size:220px; color:#FF6B5E">6h</div>
+    <div class="mono" style="font-size:30px; color:#E9E6DF; margin-top:6px">lost every week</div>
+  </div>
+</div>
+
+<!-- L1: "it's just a table" / It's not. -->
+<div class="layer" id="L1">
+  <div class="card" id="chat" style="left:110px; top:640px; width:820px; padding:40px 44px;">
+    <div style="display:flex; align-items:center; gap:22px;">
+      <div style="width:84px;height:84px;border-radius:50%;background:#E9ECFD;display:grid;place-items:center;font-weight:800;font-size:32px;color:var(--accent)">PM</div>
+      <div><div style="font-size:34px;font-weight:750">Product manager</div><div class="mono" style="font-size:26px;color:var(--muted)">#design-review</div></div>
+    </div>
+    <div style="margin-top:30px;font-size:54px;font-weight:700;line-height:1.15">it's just a table, ship it</div>
+  </div>
+  <div class="card ink big" id="notcard" style="left:330px; top:960px; padding:30px 54px; font-size:120px;">It's not.</div>
+</div>
+
+<!-- L2: three jobs -->
+<div class="layer" id="L2">
+  <div class="card blue big" id="j1" style="left:110px; top:680px; padding:26px 44px; font-size:96px;">Find</div>
+  <div class="card big" id="j2" style="left:300px; top:880px; padding:26px 44px; font-size:96px;">Compare</div>
+  <div class="card ink big" id="j3" style="left:640px; top:680px; padding:26px 44px; font-size:96px;">Act</div>
+</div>
+
+<!-- L3: find: 500 rows behind a hidden filter -->
+<div class="layer" id="L3">
+  <div class="card" id="f_table" style="left:96px; top:620px; width:888px; height:600px; overflow:hidden;">
+    <div style="position:absolute;left:0;right:0;top:0;height:80px;background:var(--soft);border-bottom:2px solid var(--line);z-index:2"></div>
+    <div style="position:absolute;right:24px;top:14px;padding:8px 22px;border:3px solid var(--line);border-radius:12px;font-size:30px;font-weight:650;background:#fff;z-index:3">Filters &#9662;</div>
+    <div id="f_rows" style="position:absolute;left:0;right:0;top:80px"></div>
+  </div>
+  <div class="card ink" id="f_count" style="left:520px; top:1130px; padding:20px 30px; font-size:44px; font-weight:800;"><span id="f_num">0</span> rows scrolled</div>
+</div>
+
+<!-- L4: filters on the screen -->
+<div class="layer" id="L4">
+  <div class="card" id="good" style="left:96px; top:620px; width:888px; padding:34px; overflow:hidden">
+    <div class="mono label" style="color:var(--accent)">FILTERS ON THE SCREEN</div>
+    <div style="margin-top:20px; white-space:nowrap"><span class="chip" id="g1">Overdue</span><span class="chip">Owner: me</span><span class="chip">This week</span></div>
+    <div id="g_rows" style="position:relative; margin-top:24px; height:330px;"></div>
+  </div>
+  <svg class="cursor" id="cur4" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#141414" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+</div>
+
+<!-- L5: compare -->
+<div class="layer" id="L5">
+  <div class="card" id="c_card" style="left:96px; top:620px; width:888px; height:560px; overflow:hidden">
+    <div style="position:absolute; left:0; right:0; top:0; height:74px; background:var(--soft); border-bottom:2px solid var(--line)"></div>
+    <div class="mono" style="position:absolute; left:40px; top:22px; font-size:26px; color:var(--muted)">CUSTOMER</div>
+    <div class="mono" style="position:absolute; right:40px; top:22px; font-size:26px; color:var(--muted)">AMOUNT <span id="c_arrow" style="color:var(--accent)"></span></div>
+    <div id="c_rows" style="position:absolute; left:0; right:0; top:74px"></div>
+  </div>
+</div>
+
+<!-- L6: act -->
+<div class="layer" id="L6">
+  <div class="card" id="a_card" style="left:96px; top:620px; width:888px; height:540px; overflow:hidden">
+    <div id="a_bulk" style="position:absolute; left:24px; right:24px; top:20px; height:78px; background:var(--ink); color:#fff; border-radius:16px; font-size:34px; font-weight:700; display:flex; align-items:center; padding:0 28px; gap:40px"><span id="a_n">1 selected</span><span style="flex:1"></span><span>Export</span><span style="color:#FF9C90">Delete</span></div>
+    <div id="a_menu" class="card" style="right:30px; top:24px; padding:10px 22px; font-size:34px; font-weight:800; border-radius:14px; z-index:3">&#8943;</div>
+    <div id="a_rows" style="position:absolute; left:0; right:0; top:120px"></div>
+  </div>
+  <svg class="cursor" id="cur6" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#141414" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+</div>
+
+<!-- L7: most do one, the total -->
+<div class="layer" id="L7">
+  <div class="card" id="s1" style="left:110px; top:640px; padding:22px 36px; font-size:64px; font-weight:800;">Find</div>
+  <div class="card" id="s2" style="left:390px; top:640px; padding:22px 36px; font-size:64px; font-weight:800; color:#BDB8AE; border-color:#BDB8AE; text-decoration:line-through">Compare</div>
+  <div class="card" id="s3" style="left:770px; top:640px; padding:22px 36px; font-size:64px; font-weight:800; color:#BDB8AE; border-color:#BDB8AE; text-decoration:line-through">Act</div>
+  <div class="card ink" id="t_big" style="left:200px; top:830px; padding:24px 48px 30px; transform:rotate(-2deg)">
+    <div class="redbig" style="font-size:190px; color:#FF6B5E" id="t_num">6h 00m</div>
+    <div class="mono" style="font-size:30px; color:#E9E6DF; margin-top:6px">per person, every week</div>
+  </div>
+</div>
+
+<!-- L8: outro -->
+<div class="layer" id="L8">
+  <div class="big" id="o1" style="position:absolute; left:96px; top:640px; font-size:140px;">Find.</div>
+  <div class="big" id="o2" style="position:absolute; left:96px; top:790px; font-size:140px;">Compare.</div>
+  <div class="big" id="o3" style="position:absolute; left:96px; top:940px; font-size:140px;">Act.</div>
+  <div class="mascot" id="m8" style="position:absolute; left:72px; top:1048px;"></div>
+  <div class="card blue" id="o4" style="left:96px; top:1230px; padding:20px 30px; font-size:40px; font-weight:800;">Save this for your next table review</div>
+  <div class="mono" id="o5" style="position:absolute; left:96px; top:1350px; font-size:32px; color:var(--muted)">follow for more on B2B SaaS design</div>
+</div>
+
+<div id="narr"></div>
+<div id="plus" class="mono"></div>
+</div>
+<script>
+const CFG = window.CFG || { mode: "text", lines: [] };
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const eo = t => 1 - Math.pow(1 - clamp(t), 3);
+const eio = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+const spring = t => { t = clamp(t, 0, 10); return 1 - Math.exp(-7 * t) * Math.cos(11 * t); };
+const pr = (x, a, d) => clamp((x - a) / d);
+const $ = id => document.getElementById(id);
+function pop(el, p, o = {}) {
+  const s = spring(p), dx = o.dx || 0, dy = o.dy == null ? 260 : o.dy, rot = o.rot || 0, sc = o.sc || 0.7;
+  el.style.opacity = clamp(p * 4);
+  el.style.transform = `translate(${(1 - s) * dx}px, ${(1 - s) * dy}px) rotate(${rot + (1 - s) * (o.spin || 8)}deg) scale(${lerp(sc, 1, s)})`;
+}
+
+// ---------- data ----------
+const NAMES = ["Acme Corp", "Northwind", "Fieldstone", "Globex", "Kestrel", "Lumen Labs", "Bluebird", "Harbor & Co", "Pinecrest", "Orbit Inc", "Meridian", "Copperleaf", "Westgate", "Juniper"];
+const STAT = ["Overdue", "Paid", "Overdue", "Pending", "Overdue", "Pending", "Overdue", "Paid", "Paid", "Overdue", "Pending", "Paid", "Paid", "Pending"];
+const cls = s => s === "Overdue" ? "over" : s === "Paid" ? "paid" : "pend";
+const row = (i, k, extra = "") => `<div class="row" style="top:${i * 78}px${extra}"><span style="left:40px">${NAMES[k]}</span><span style="left:400px;width:200px;text-align:right">$${(((k * 733) % 4200) + 300).toLocaleString("en-US")}</span><span class="st ${cls(STAT[k])}" style="left:660px">${STAT[k]}</span></div>`;
+let fr = ""; for (let i = 0; i < 48; i++) fr += row(i, i % 14); $("f_rows").innerHTML = fr;
+let hr = ""; for (let i = 0; i < 4; i++) hr += `<div class="row" style="top:${i * 66}px;height:66px;font-size:28px"><span style="left:30px;top:16px">${NAMES[i]}</span><span class="st ${cls(STAT[i])}" style="left:380px;top:10px !important">${STAT[i]}</span></div>`; $("h_rows").innerHTML = hr;
+const GR = [["Acme Corp", "Overdue"], ["Fieldstone", "Overdue"], ["Globex", "Pending"], ["Kestrel", "Overdue"], ["Lumen Labs", "Pending"]];
+$("g_rows").innerHTML = GR.map((r, i) => `<div class="row" id="gr${i}" style="top:${i * 66}px;height:66px;font-size:30px"><span style="left:6px;top:16px">${r[0]}</span><span class="st ${cls(r[1])}" style="left:560px;top:12px !important">${r[1]}</span></div>`).join("");
+const CR = [["Northwind", 860], ["Fieldstone", 4100], ["Acme Corp", 1200], ["Kestrel", 3300], ["Bluebird", 640]];
+const SORTED = [...CR.keys()].sort((a, b) => CR[b][1] - CR[a][1]);
+$("c_rows").innerHTML = CR.map((r, i) => `<div class="row" id="cr${i}" style="height:96px;font-size:38px"><span style="left:40px;top:28px">${r[0]}</span><span class="amt" id="ca${i}" style="top:26px;font-weight:700;font-variant-numeric:tabular-nums">$${r[1].toLocaleString("en-US")}</span></div>`).join("");
+const AR = [["Fieldstone", "$4,100"], ["Kestrel", "$3,300"], ["Acme Corp", "$1,200"], ["Bluebird", "$640"]];
+$("a_rows").innerHTML = AR.map((r, i) => `<div class="row" id="ar${i}" style="top:${i * 100}px;height:100px;font-size:38px"><div class="cb" id="acb${i}" style="top:32px"></div><span style="left:96px;top:28px">${r[0]}</span><span style="left:560px;top:28px;width:260px;text-align:right;font-weight:700">${r[1]}</span></div>`).join("");
+
+// ---------- timeline ----------
+const LINES = CFG.lines; let acc = CFG.lead == null ? 0.15 : CFG.lead; const T0 = [];
+LINES.forEach(l => { T0.push(acc); acc += l.dur + (CFG.gap || 0.12); });
+const TOTAL = acc + (CFG.tail || 0.6);
+window.TOTAL = TOTAL;
+// stakes meter: minutes added on problem beats, at a point in the line
+const COSTS = LINES.map((l, i) => l.cost ? { t: T0[i] + l.cost[0] * l.dur, m: l.cost[1] } : null).filter(Boolean);
+const fmt = m => `${Math.floor(m / 60)}h ${String(Math.round(m % 60)).padStart(2, "0")}m`;
+function meter(t) {
+  let m = 0, bump = 0, last = null;
+  COSTS.forEach(c => { const k = eo(pr(t, c.t, 0.7)); m += c.m * k; if (t >= c.t && t < c.t + 0.9) { bump = 1 - (t - c.t) / 0.9; last = c; } });
+  $("mv").textContent = fmt(m);
+  $("mv").style.transform = `scale(${1 + 0.25 * Math.sin(bump * Math.PI) })`;
+  const pl = $("plus");
+  if (last) { const k = (t - last.t) / 0.9; pl.textContent = "+" + fmt(last.m).replace("0h ", ""); pl.style.opacity = 1 - k; pl.style.right = "96px"; pl.style.top = (290 - k * 40) + "px"; pl.style.left = "auto"; }
+  else pl.style.opacity = 0;
+  return bump;
+}
+
+// narrator pose per line
+const POSE = ["shock", "shrug", "point", "shock", "cheer", "point", "point", "shrug", null];
+
+const ANIM = [
+  (p, t) => { // hook: visible at frame 0, so it starts from its settled state and only wobbles
+    const w = Math.sin(t * 3); $("h_tbl").style.transform = `rotate(${-4 + w}deg) translateY(${w * 4}px)`;
+    $("h_big").style.transform = `rotate(${3 - w * 0.8}deg) scale(${1 + 0.03 * Math.sin(t * 5)})`; },
+  (p, t) => { pop($("chat"), pr(p, 0, 0.3), { dy: 500, rot: -3 }); const s = spring(pr(p, 0.62, 0.25)); const n = $("notcard"); n.style.opacity = clamp(s * 4) * (p > 0.6 ? 1 : 0); n.style.transform = `scale(${lerp(1.8, 1, s)}) rotate(${-5 + Math.sin(pr(p, 0.64, 0.12) * Math.PI * 3) * 2}deg)`; },
+  (p, t) => { pop($("j1"), pr(p, 0.05, 0.3), { dx: -600, dy: 0, rot: -6 }); pop($("j2"), pr(p, 0.2, 0.3), { dy: 600, rot: 3 }); pop($("j3"), pr(p, 0.35, 0.3), { dx: 600, dy: 0, rot: 7 }); },
+  (p, t) => { pop($("f_table"), pr(p, 0, 0.2), { dy: 700, rot: 2 });
+    const sc = eio(pr(p, 0.15, 0.6)); $("f_rows").style.transform = `translateY(${-sc * 3000}px)`; $("f_rows").style.filter = `blur(${Math.sin(Math.PI * sc) * 6}px)`;
+    pop($("f_count"), pr(p, 0.2, 0.2), { dx: 300, dy: 0, rot: -4 }); $("f_num").textContent = Math.round(lerp(0, 500, sc)); },
+  (p, t) => { pop($("good"), pr(p, 0, 0.25), { dx: 500, dy: 0, rot: 2 });
+    const on = p > 0.55; $("g1").classList.toggle("on", on); const fp = eo(pr(p, 0.58, 0.2)); let y = 0;
+    GR.forEach((r, i) => { const keep = r[1] === "Overdue"; const el = $("gr" + i); el.style.opacity = keep ? 1 : 1 - fp; el.style.top = lerp(i * 66, keep ? y * 66 : i * 66, fp) + "px"; if (keep) y++; });
+    const k = eio(pr(p, 0.25, 0.25)), cx = lerp(980, 200, k), cy = lerp(1400, 745, k); const c = $("cur4"); c.style.opacity = clamp(pr(p, 0.22, 0.05));
+    c.style.transform = `translate(${cx}px, ${cy}px) scale(${p > 0.52 && p < 0.58 ? 0.85 : 1})`; },
+  (p, t) => { pop($("c_card"), pr(p, 0, 0.2), { dy: 700, rot: -2 });
+    const al = eio(pr(p, 0.5, 0.15)), so = eio(pr(p, 0.68, 0.18)); $("c_arrow").textContent = p > 0.66 ? "↓" : "";
+    CR.forEach((r, i) => { const a = $("ca" + i); const leftX = 360, rightX = 888 - 40 - a.offsetWidth; a.style.left = lerp(leftX, rightX, al) + "px";
+      a.style.color = p > 0.2 && al < 0.05 ? "var(--red)" : "var(--ink)";
+      const y = lerp(i * 96, SORTED.indexOf(i) * 96, so); const el = $("cr" + i); el.style.top = y + "px";
+      el.style.background = SORTED.indexOf(i) === 0 && so > 0.5 ? "rgba(43,75,238,0.08)" : "#fff"; }); },
+  (p, t) => { pop($("a_card"), pr(p, 0, 0.2), { dy: 700, rot: 2 });
+    const sel = p > 0.62, c1 = p > 0.62, c2 = p > 0.7; $("acb0").classList.toggle("on", c1); $("acb1").classList.toggle("on", c2);
+    $("ar0").style.background = c1 ? "#EEF1FE" : "#fff"; $("ar1").style.background = c2 ? "#EEF1FE" : "#fff";
+    $("a_menu").style.opacity = sel ? 0 : 1; $("a_menu").style.borderColor = p > 0.25 && p < 0.6 ? "var(--red)" : "var(--ink)";
+    const b = spring(pr(p, 0.64, 0.2)); $("a_bulk").style.opacity = p > 0.64 ? clamp(b * 3) : 0; $("a_bulk").style.transform = `translateY(${(1 - b) * -90}px)`; $("a_n").textContent = c2 ? "2 selected" : "1 selected";
+    $("a_rows").style.top = lerp(20, 120, eo(pr(p, 0.64, 0.15))) + "px";
+    const K = [[0, 1000, 1400], [0.15, 1000, 1400], [0.3, 840, 660], [0.5, 840, 660], [0.6, 150, 680], [0.68, 150, 680], [0.74, 150, 780], [1, 150, 780]];
+    let cx = K[0][1], cy = K[0][2]; for (let i = 0; i < K.length - 1; i++) if (p >= K[i][0] && p <= K[i + 1][0]) { const k = eio((p - K[i][0]) / (K[i + 1][0] - K[i][0])); cx = lerp(K[i][1], K[i + 1][1], k); cy = lerp(K[i][2], K[i + 1][2], k); }
+    const c = $("cur6"); c.style.opacity = clamp(pr(p, 0.12, 0.05)); const pressed = (p > 0.3 && p < 0.34) || (p > 0.6 && p < 0.64) || (p > 0.69 && p < 0.73);
+    c.style.transform = `translate(${cx}px, ${cy}px) scale(${pressed ? 0.85 : 1})`; },
+  (p, t) => { pop($("s1"), pr(p, 0, 0.2), { dy: -300, rot: -4 }); pop($("s2"), pr(p, 0.08, 0.2), { dy: -300, rot: 3 }); pop($("s3"), pr(p, 0.16, 0.2), { dy: -300, rot: -2 });
+    const s = spring(pr(p, 0.45, 0.3)); const b = $("t_big"); b.style.opacity = p > 0.45 ? 1 : 0; b.style.transform = `rotate(-2deg) scale(${lerp(1.6, 1, s)})`; },
+  (p, t) => { ["o1", "o2", "o3"].forEach((id, i) => { const s = spring(pr(p, i * 0.1, 0.3)); const el = $(id); el.style.opacity = clamp(s * 3); el.style.transform = `translateX(${(1 - s) * 200}px) scale(${lerp(1.3, 1, s)})`; });
+    const u = eo(pr(p, 0.3, 0.18)); $("m8").style.opacity = p > 0.28 ? 1 : 0; $("m8").innerHTML = under({ pose: "underline", t, scale: 0.8, len: 40 + u * 300 });
+    pop($("o4"), pr(p, 0.45, 0.25), { dy: 200, rot: -2 }); $("o5").style.opacity = eo(pr(p, 0.6, 0.2)); }
+];
+
+// kinetic headline: the current phrase of the narration, word by word; *word* marks a key word
+function phrases(text) {
+  const toks = text.split(" ").map(w => ({ key: /\*/.test(w), w: w.replace(/\*/g, "") }));
+  let inKey = false; toks.forEach((o, i) => { const raw = text.split(" ")[i]; const opens = raw.startsWith("*"), closes = /\*[.,:!?']*$/.test(raw) || raw.endsWith("*"); o.key = inKey || opens; if (opens) inKey = true; if (closes) inKey = false; });
+  const out = []; let cur = [], chars = 0;
+  toks.forEach(o => { cur.push(o); chars += o.w.length + 1; if ((/[.:,?!]$/.test(o.w) && chars > 10) || chars > 28) { out.push(cur); cur = []; chars = 0; } });
+  if (cur.length) out.push(cur); return out;
+}
+const PH = LINES.map((l, i) => i === 0 ? [phrases(l.text).flat()] : phrases(l.text));   // the hook line is shown whole at frame 0
+
+function render(t) {
+  $("fill").style.width = (888 * clamp(t / TOTAL)) + "px";
+  let li = 0; T0.forEach((s, i) => { if (t >= s) li = i; });
+  const L = LINES[li]; const lt = t - T0[li]; const span = L.dur + (CFG.gap || 0.12); const p = clamp(lt / span);
+  for (let i = 0; i < LINES.length; i++) $("L" + i).style.display = i === li ? "block" : "none";
+  const layer = $("L" + li);
+  const exitP = li < LINES.length - 1 ? eio(pr(lt, span - 0.2, 0.2)) : 0;
+  layer.style.transform = `translateX(${-exitP * 1200}px) scale(${1 + 0.04 * p}) rotate(${exitP * -4}deg)`;
+  layer.style.filter = exitP > 0 ? `blur(${exitP * 14}px)` : "none";
+  ANIM[li](p, t);
+  $("section").textContent = "// " + (L.section || "");
+  const bump = meter(t);
+  // headline
+  const ph = PH[li], words = ph.flat(), tot = words.reduce((a, o) => a + o.w.length + 1, 0), prog = clamp(lt / L.dur);
+  let a0 = 0, pi = ph.length - 1;
+  for (let k = 0; k < ph.length; k++) { const len = ph[k].reduce((a, o) => a + o.w.length + 1, 0); if (prog < (a0 + len) / tot) { pi = k; break; } a0 += len; }
+  let w0 = a0; const first = t < 0.05 || (li === 0 && pi === 0);
+  $("head").innerHTML = ph[pi].map(o => { const st = w0 / tot; w0 += o.w.length + 1; const k = first ? 1 : eo(clamp((prog - st) * tot / 4 + 0.35));
+    return `<span class="w${o.key ? " key" : ""}" style="opacity:${0.12 + 0.88 * k};transform:translateY(${(1 - k) * 26}px)">${o.w}</span>`; }).join("");
+  $("head").style.opacity = li === LINES.length - 1 ? 0 : 1 - exitP * 0.8;   // the outro's big type carries the last line
+  // narrator: always on screen, reacts to each beat and jumps when the meter goes up
+  const pose = POSE[li], n = $("narr");
+  if (pose) { const ps = bump > 0 ? "shock" : pose; n.style.opacity = 1; n.innerHTML = under({ pose: ps, t, scale: 1.5 }); n.style.transform = `translateY(${-Math.sin(bump * Math.PI) * 40}px)`; }
+  else n.style.opacity = 0;
+}
+window.render = render;
+render(0);
+</script></body></html>

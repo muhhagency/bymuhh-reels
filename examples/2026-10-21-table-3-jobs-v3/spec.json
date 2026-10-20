@@ -1,0 +1,16 @@
+{
+ "slug": "test-table-3-jobs-v3",
+ "voice": "am_michael",
+ "lead": 0,
+ "lines": [
+  {"text": "This table is costing your team *six hours* a week.", "section": "the problem"},
+  {"text": "Your PM says it's just a table. It's *not.*", "section": "the problem"},
+  {"text": "Every data table has *three jobs.*", "section": "the problem"},
+  {"text": "Job one: *find.* With hidden filters, people scroll *five hundred rows* for the five that matter.", "section": "01 of 03 / find", "cost": [0.35, 130]},
+  {"text": "So put the filters *on the screen.* One click, five rows.", "section": "01 of 03 / find"},
+  {"text": "Job two: *compare.* Left-aligned numbers can't be scanned, so *right-align* them and sort.", "section": "02 of 03 / compare", "cost": [0.3, 80]},
+  {"text": "Job three: *act.* When actions hide in a menu, every task is slower. Show them *on selection.*", "section": "03 of 03 / act", "cost": [0.4, 150]},
+  {"text": "Most tables only do *one.* That's where the *six hours* go.", "section": "the total"},
+  {"text": "Find. Compare. *Act.* Save this for your next table review.", "section": "save this"}
+ ]
+}

@@ -24,7 +24,8 @@ for ln in lines:
     for k in ("text", "card"):
         if "—" in ln.get(k, ""):
             sys.exit("em dash found in spec; rewrite the line")
-GAP, LEAD, TAIL = 0.12, 0.15, 0.5
+GAP, TAIL = 0.12, 0.5
+LEAD = float(spec.get("lead", 0.15))   # seconds of silence before the first line; the v3 template uses 0
 
 if mode == "voice":
     cache = os.path.expanduser("~/.cache/kokoro"); os.makedirs(cache, exist_ok=True)
@@ -37,16 +38,16 @@ if mode == "voice":
     k = Kokoro(os.path.join(cache, "kokoro-v1.0.onnx"), os.path.join(cache, "voices-v1.0.bin"))
     chunks, sr = [], 24000
     for i, ln in enumerate(lines):
-        a, sr = k.create(ln["text"], voice=spec.get("voice", "am_michael"), speed=1.12, lang="en-us")
+        a, sr = k.create(ln["text"].replace("*", ""), voice=spec.get("voice", "am_michael"), speed=1.12, lang="en-us")
         ln["dur"] = round(len(a) / sr, 3)
         if not chunks: chunks.append(np.zeros(int(LEAD * sr)))
         chunks += [a, np.zeros(int(GAP * sr))]
     wav = os.path.join(d, "narration.wav"); sf.write(wav, np.concatenate(chunks), sr)
 else:
     for ln in lines:
-        ln["dur"] = ln.get("dur") or max(1.8, min(4.0, len(ln["text"].split()) * 0.33))
+        ln["dur"] = ln.get("dur") or max(1.8, min(4.2, len(ln["text"].split()) * 0.36))
 
-cfg = {"mode": mode, "gap": GAP, "tail": TAIL, "lines": lines}
+cfg = {"mode": mode, "gap": GAP, "tail": TAIL, "lead": LEAD, "lines": lines}
 src = open(os.path.join(d, "page.html")).read()
 built = os.path.join(d, f"_built_{mode}.html")
 open(built, "w").write(src.replace("<script>", f"<script>window.CFG={json.dumps(cfg)};</script>\n<script>", 1))
