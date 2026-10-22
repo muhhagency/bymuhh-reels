@@ -3,3 +3,8 @@ _silent.mp4
 narration.wav
 preview.png
 videos/test-*
+examples/*/preview.png
+examples/*/_built_*.html
+work/*/preview.png
+work/*/_built_*.html
+work/*/narration.wav

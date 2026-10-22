@@ -253,7 +253,7 @@ S.checklist = (id, s) => {
 
 // bignum: one big accent number card. {value, label, items:[...] optional small cards above}
 S.bignum = (id, s) => ({
-  html: (s.items || []).map((w, i) => `<div class="card" id="${id}s${i}" style="left:${110 + i * 290}px;top:640px;padding:20px 32px;font-size:56px;font-weight:800;opacity:0;${i ? "color:var(--ink40);border-color:var(--ink40);text-decoration:line-through" : ""}">${esc(w)}</div>`).join("") +
+  html: (s.items || []).map((w, i) => `<div class="card" id="${id}s${i}" style="left:${[110, 330, 700][i % 3]}px;top:${640 + (i % 2) * 20}px;padding:20px 32px;font-size:50px;font-weight:800;opacity:0;${i ? "color:var(--ink40);border-color:var(--ink40);text-decoration:line-through" : ""}">${esc(w)}</div>`).join("") +
     `<div class="card blue" id="${id}n" style="left:160px;top:${(s.items || []).length ? 820 : 700}px;padding:24px 48px 30px;opacity:0"><div class="huge" style="font-size:${String(s.value).length > 5 ? 170 : 220}px">${esc(s.value)}</div><div class="mono" style="font-size:30px;color:#fff;opacity:0.85;margin-top:6px">${esc(s.label)}</div></div>`,
   anim: (p) => { (s.items || []).forEach((w, i) => pop($(id + "s" + i), pr(p, i * 0.08, 0.2), { dy: -300, rot: [-4, 3, -2][i % 3] })); const k = spring(pr(p, 0.35, 0.3)); const n = $(id + "n"); n.style.opacity = p > 0.35 ? 1 : 0; n.style.transform = `rotate(-2deg) scale(${lerp(1.6, 1, k)})`; }
 });

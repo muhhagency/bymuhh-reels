@@ -1,0 +1,26 @@
+{
+ "slug": "example-table-3-jobs",
+ "voice": "am_michael",
+ "lead": 0,
+ "meter": {"label": "TIME LOST / WEEK", "unit": "minutes"},
+ "lines": [
+  {"text": "This table is costing your team *six hours* a week.", "section": "the problem", "pose": "shock",
+   "scene": {"type": "stakes", "value": "6h", "label": "lost every week", "behind": "table"}},
+  {"text": "Your PM says it's just a table. It's *not.*", "section": "the problem", "pose": "shrug",
+   "scene": {"type": "chat", "role": "Product manager", "channel": "#design-review", "msg": "it's just a table, ship it", "stamp": "It's not."}},
+  {"text": "Every data table has *three jobs.*", "section": "the problem", "pose": "point",
+   "scene": {"type": "cards", "items": ["Find", "Compare", "Act"]}},
+  {"text": "Job one: *find.* With hidden filters, people scroll *five hundred rows* for the five that matter.", "section": "01 of 03 / find", "cost": [0.35, 130], "pose": "shock",
+   "scene": {"type": "table_scroll", "count": 500, "label": "rows scrolled"}},
+  {"text": "So put the filters *on the screen.* One click, five rows.", "section": "01 of 03 / find", "pose": "cheer",
+   "scene": {"type": "filter", "chips": ["Overdue", "Owner: me", "This week"], "keep": "Overdue"}},
+  {"text": "Job two: *compare.* Left-aligned numbers can't be scanned, so *right-align* them and sort.", "section": "02 of 03 / compare", "cost": [0.3, 80], "pose": "point",
+   "scene": {"type": "sort"}},
+  {"text": "Job three: *act.* When actions hide in a menu, every task is slower. Show them *on selection.*", "section": "03 of 03 / act", "cost": [0.4, 150], "pose": "point",
+   "scene": {"type": "bulk", "actions": ["Export", "Delete"]}},
+  {"text": "Most tables only do *one.* That's where the *six hours* go.", "section": "the total", "pose": "shrug",
+   "scene": {"type": "bignum", "value": "6h 00m", "label": "per person, every week", "items": ["Find", "Compare", "Act"]}},
+  {"text": "Find. Compare. *Act.* Save this for your next table review.", "section": "save this",
+   "scene": {"type": "outro", "words": ["Find.", "Compare.", "Act."], "save": "Save this for your next table review"}}
+ ]
+}

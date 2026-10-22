@@ -7,7 +7,7 @@ Files in `videos/` are public. Buffer downloads them from:
 
 ## Style: card-collage motion (v3 template)
 
-The template is `examples/2026-10-21-table-3-jobs-v3/` (page.html + spec.json). Every reel is built from it.
+Every reel is built from `engine/reel.html` (v4 scene template) and a spec.json; see "Make a reel" below.
 
 Look
 - Colors are the muhh_ brand tokens only (from the muhh_socials Figma file): paper #f7f7f5, white #ffffff, ink #0e0e0c, ink-60 #676765, ink-40 #70706e, rule #d2d2d0, accent #0b4af1 (tints of the accent are fine). No red, green, amber or any other color, including for warnings, stakes numbers and status pills: stakes and highlights use the accent, bad or overdue states use ink, neutral states use ink-60 with a rule outline. Fonts: Inter and IBM Plex Mono only.
@@ -26,13 +26,36 @@ Structure (what makes people stay)
 8. End with a save line ("Save this for your next table review") and the follow line. No "comment X to get Y".
 - Length 30 to 40 seconds, 8 to 10 lines. Text stays inside x 96 to 984 and y 170 to 1500.
 
-## Make a reel
+## Make a reel (v4: write a spec, nothing else)
 
-1. Copy `examples/2026-10-21-table-3-jobs-v3/` to `work/<slug>/` (spec.json and page.html only).
-2. Edit `spec.json`: the slug, "lead": 0, and one entry per line: narration `text` (key words in *asterisks*), `section` label, and `cost` on problem beats.
-3. Edit `page.html`. Keep the engine parts as they are (tokens, chrome, meter, kinetic headline, narrator, pop/spring helpers, render). Replace the layers `L0`..`Ln`, the `ANIM` functions and `POSE` with this topic's beats: one layer, one ANIM function and one pose per line. Font and mascot urls point at `../../engine/`.
-4. Preview with `python3 engine/make_reel.py work/<slug> --preview`, then look at `work/<slug>/preview.png`. Also check frame 0 by itself: the whole hook and the stakes prop must be readable. Fix overlap, clipping or empty frames before you encode.
-5. Build with `python3 engine/make_reel.py work/<slug>` (AI voice). Use `--mode text` for a no-voice version: same headline, silent track for a trending sound.
-6. Commit only `videos/<slug>.mp4` plus the work folder's `spec.json` and `page.html`, then push. Check the raw URL returns 200 before giving it to Buffer. Test renders go to `videos/test-*` (not committed).
+A reel is only `work/<slug>/spec.json`. The animation comes from ready-made scenes in `engine/reel.html`, which you never edit for a single video. Examples: `examples/v4-table-3-jobs/spec.json` and `work/2026-10-23-delete-button/spec.json`.
+
+spec.json:
+- `slug`, `"lead": 0`, `meter`: `{"label": "TIME LOST / WEEK", "unit": "minutes"}` (or `"unit": "count", "suffix": ""` for clicks, tickets and so on; costs are then plain numbers).
+- `lines`: 8 to 10 items, each `{"text", "section", "pose", "cost"?, "scene"}`. `text` is the narration with 1 or 2 key words in *asterisks*. `cost` is `[where in the line 0..1, amount]` on problem beats; the costs add up to the hook's number. `pose` is Under_'s pose (idle, shock, shrug, point, cheer, wave).
+
+Scenes (`"scene": {"type": ..., options}`):
+- `stakes` {value, label, behind: table | buttons | dashboard | none}: the hook prop, already on screen at frame 0. Use it on line 1 only.
+- `chat` {role, channel, msg, stamp}: someone waves the problem away, then a stamp card ("It's not.").
+- `cards` {items: [up to 5 short words], strike: [indexes]}: big word cards tossed in; struck ones get crossed out.
+- `table_scroll` {count, label}: a long table flies past behind a closed "Filters" button; a counter climbs.
+- `filter` {chips, keep}: filter chips on screen; the cursor clicks the first and rows filter down.
+- `sort` {left, right}: numbers start left-aligned and unsorted, then align right and sort.
+- `bulk` {actions}: actions hidden in a "..." menu, then rows get selected and the bulk bar appears.
+- `buttons` {mode: bad | good, buttons, danger, primary, title, oops}: a form's action row. bad: equal buttons, the cursor slips onto the dangerous one and an "oops" card appears. good: the dangerous one moves far left as a text button and the gap is marked.
+- `dialog` {mode: bad | good, title, body, cancel, confirm, oops}: bad: "Are you sure?" clicked straight through, then the consequence. good: names the object and the consequence.
+- `toast` {text, action}: the row disappears, a toast with Undo slides in, the cursor clicks Undo and the row returns.
+- `dashboard` {questions: [3]}: 12 equal charts; 9 fade and 3 grow, each labelled with the question it answers.
+- `checklist` {title, items}: items appear and tick one by one (good for "Steal this").
+- `bignum` {value, label, items?}: one big accent-blue number card, optionally under struck-out word cards (the total).
+- `outro` {words: [2 to 4 short phrases], save}: the takeaway in big type, Under_ underlines the last phrase, then the save line. Always the last line.
+
+Pick scenes that show the problem first and then the fix. If a topic needs a scene that does not exist, use the closest one; never edit reel.html during a daily run.
+
+Build:
+1. `python3 engine/make_reel.py work/<slug> --preview` and look at `work/<slug>/preview.png`; also snapshot t=0 with `python3 engine/snap.py work/<slug>/_built_voice.html out.png 0`. The whole hook and the stakes card must be readable at frame 0.
+2. `python3 engine/make_reel.py work/<slug>` (AI voice; add `--mode text` for no-voice). Output: `videos/<slug>.mp4`.
+3. Commit only `videos/<slug>.mp4` and `work/<slug>/spec.json`, push, and check the raw URL returns 200.
+Old hand-coded reels (a `page.html` in the folder) still build the same way.
 
 Needs Python with playwright, Pillow, numpy, soundfile, and kokoro-onnx (`pip install kokoro-onnx soundfile --break-system-packages`), plus ffmpeg and Chromium. The Kokoro model files download to `~/.cache/kokoro` on the first run.
