@@ -1,0 +1,24 @@
+{
+ "slug": "2026-10-23-delete-button",
+ "voice": "am_michael",
+ "lead": 0,
+ "meter": {"label": "SUPPORT TIME / MONTH", "unit": "minutes"},
+ "lines": [
+  {"text": "This button row is costing your support team *nine hours* a month.", "section": "the problem", "pose": "shock",
+   "scene": {"type": "stakes", "value": "9h", "label": "support time / month", "behind": "buttons"}},
+  {"text": "Delete sits between Cancel and Save. One rushed click, and the invoice is *gone.*", "section": "01 of 03 / placement", "cost": [0.62, 240], "pose": "point",
+   "scene": {"type": "buttons", "mode": "bad", "buttons": ["Cancel", "Delete", "Save"], "danger": "Delete", "primary": "Save", "oops": "Invoice INV-1042 deleted"}},
+  {"text": "Move Delete to the far left, as a quiet text button. The *gap* is the safety feature.", "section": "01 of 03 / placement", "pose": "cheer",
+   "scene": {"type": "buttons", "mode": "good", "buttons": ["Cancel", "Delete", "Save"], "danger": "Delete", "primary": "Save"}},
+  {"text": "Next, the label. A button that just says *Delete* never says what gets deleted.", "section": "02 of 03 / the label", "cost": [0.55, 120], "pose": "shrug",
+   "scene": {"type": "cards", "items": ["Delete", "Delete invoice INV-1042"], "strike": [0]}},
+  {"text": "And *Are you sure?* gets clicked straight through, every time.", "section": "03 of 03 / the confirm", "cost": [0.45, 180], "pose": "shock",
+   "scene": {"type": "dialog", "mode": "bad"}},
+  {"text": "If it can be undone, skip the dialog. Do it, then show *Undo* for ten seconds.", "section": "03 of 03 / the confirm", "pose": "cheer",
+   "scene": {"type": "toast", "text": "Invoice INV-1042 deleted", "action": "Undo"}},
+  {"text": "That's the *nine hours* back, every month.", "section": "the total", "pose": "point",
+   "scene": {"type": "bignum", "value": "9h 00m", "label": "back every month"}},
+  {"text": "Separate it. Name it. *Undo* it. Save this for your next form review.", "section": "save this",
+   "scene": {"type": "outro", "words": ["Separate it.", "Name it.", "Undo it."], "save": "Save this for your next form review"}}
+ ]
+}

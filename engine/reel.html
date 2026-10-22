@@ -1,0 +1,327 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- muhh_ reel template v4: a reel is described entirely by spec.json. Each line picks a ready-made
+     scene ("scene": {"type": ..., ...}); nothing in this file is edited per video. -->
+<script src="../../engine/mascot.js"></script>
+<style>
+@font-face { font-family: "MuhhSans"; src: url("../../engine/fonts/sans.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "MuhhMono"; src: url("../../engine/fonts/mono.woff2") format("woff2"); }
+:root { --paper:#f7f7f5; --white:#ffffff; --ink:#0e0e0c; --ink60:#676765; --ink40:#70706e; --line:#d2d2d0; --accent:#0b4af1; --tint:rgba(11,74,241,0.10); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+body { font-family: "MuhhSans", "Inter", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.mono { font-family: "MuhhMono", "IBM Plex Mono", monospace; }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+#grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(14,14,12,0.045) 1.2px, transparent 1.2px); background-size: 8px 8px; }
+#bar { position: absolute; left: 96px; top: 176px; width: 888px; height: 4px; background: var(--line); }
+#fill { position: absolute; left: 0; top: 0; height: 4px; background: var(--ink); }
+#sig { position: absolute; left: 96px; top: 196px; font-size: 40px; font-weight: 800; letter-spacing: -1.5px; }
+#sig b { color: var(--accent); }
+#section { position: absolute; left: 96px; top: 262px; font-size: 28px; color: var(--ink60); letter-spacing: 0.5px; }
+#meter { position: absolute; right: 96px; top: 196px; text-align: right; }
+#meter .k { font-size: 24px; color: var(--ink60); letter-spacing: 1px; }
+#meter .v { font-size: 46px; font-weight: 700; color: var(--accent); line-height: 1.1; display: inline-block; transform-origin: right center; }
+#meter .n { font-size: 20px; color: var(--ink60); }
+#head { position: absolute; left: 96px; top: 318px; width: 888px; font-size: 86px; font-weight: 800; letter-spacing: -2.5px; line-height: 1.04; }
+#head .w { display: inline-block; margin-right: 0.24em; }
+#head .w.key { color: var(--accent); }
+.layer { position: absolute; inset: 0; display: none; transform-origin: 540px 950px; }
+.card { position: absolute; background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 12px 12px 0 rgba(14,14,12,0.13); }
+.ink { background: var(--ink); color: #fff; }
+.blue { background: var(--accent); color: #fff; border-color: var(--accent); }
+.big { font-weight: 800; letter-spacing: -2px; line-height: 1.02; }
+.lbl { font-family: "MuhhMono", monospace; font-size: 26px; letter-spacing: 1px; color: var(--ink60); }
+.chip { display: inline-block; height: 64px; padding: 0 28px; border: 3px solid var(--line); border-radius: 32px; font-size: 32px; font-weight: 600; line-height: 58px; background: #fff; margin-right: 12px; }
+.chip.on { border-color: var(--accent); background: var(--tint); color: var(--accent); }
+.row { position: absolute; left: 0; right: 0; height: 78px; border-bottom: 2px solid var(--line); font-size: 32px; background: #fff; }
+.row span { position: absolute; top: 22px; }
+.st { height: 44px; padding: 0 18px; border-radius: 22px; font-size: 26px; font-weight: 650; line-height: 44px; top: 17px !important; }
+.over { background: var(--ink); color: #fff; } .paid { background: #fff; color: var(--ink60); box-shadow: inset 0 0 0 2px var(--line); } .pend { background: var(--paper); color: var(--ink60); box-shadow: inset 0 0 0 2px var(--line); }
+.cb { position: absolute; left: 26px; top: 32px; width: 32px; height: 32px; border: 3px solid var(--line); border-radius: 8px; background: #fff; }
+.cb.on { background: var(--accent); border-color: var(--accent); }
+.cb.on:after { content: ""; position: absolute; left: 8px; top: 2px; width: 8px; height: 16px; border: solid #fff; border-width: 0 4px 4px 0; transform: rotate(45deg); }
+.btn { position: absolute; height: 84px; padding: 0 36px; border-radius: 16px; font-size: 34px; font-weight: 700; line-height: 78px; border: 3px solid var(--ink); background: #fff; white-space: nowrap; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.text { border-color: transparent; background: transparent; text-decoration: underline; text-underline-offset: 6px; }
+.field { height: 64px; border: 3px solid var(--line); border-radius: 12px; margin-top: 12px; }
+.cursor { position: absolute; left: 0; top: 0; width: 56px; height: 70px; z-index: 40; opacity: 0; }
+.huge { color: #fff; font-weight: 800; letter-spacing: -6px; line-height: 0.9; }
+#narr { position: absolute; left: 321px; top: 1268px; z-index: 30; }
+#plus { position: absolute; z-index: 31; font-size: 40px; font-weight: 800; color: var(--accent); }
+</style></head>
+<body><div id="stage">
+<div id="grain"></div>
+<div id="bar"><div id="fill"></div></div>
+<div id="sig">muhh<b>_</b></div>
+<div id="section" class="mono"></div>
+<div id="meter" class="mono"><div class="k" id="mk"></div><div class="v" id="mv"></div><div class="n">illustrative</div></div>
+<div id="head"></div>
+<div id="layers"></div>
+<div id="narr"></div>
+<div id="plus" class="mono"></div>
+</div>
+<script>
+const CFG = window.CFG || { mode: "text", lines: [] };
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const eo = t => 1 - Math.pow(1 - clamp(t), 3);
+const eio = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+const spring = t => { t = clamp(t, 0, 10); return 1 - Math.exp(-7 * t) * Math.cos(11 * t); };
+const pr = (x, a, d) => clamp((x - a) / d);
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+function pop(el, p, o = {}) {
+  const s = spring(p), dx = o.dx || 0, dy = o.dy == null ? 260 : o.dy, rot = o.rot || 0, sc = o.sc || 0.7;
+  el.style.opacity = clamp(p * 4);
+  el.style.transform = `translate(${(1 - s) * dx}px, ${(1 - s) * dy}px) rotate(${rot + (1 - s) * (o.spin || 8)}deg) scale(${lerp(sc, 1, s)})`;
+}
+const CURSOR = id => `<svg class="cursor" id="${id}" viewBox="0 0 48 60"><path d="M4 3 L4 47 L15 37 L24 57 L33 53 L24 33 L40 33 Z" fill="#0e0e0c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>`;
+function cursorPath(el, p, K, presses = []) { // K: [[p, x, y], ...]
+  let cx = K[0][1], cy = K[0][2];
+  for (let i = 0; i < K.length - 1; i++) if (p >= K[i][0] && p <= K[i + 1][0]) { const k = eio((p - K[i][0]) / (K[i + 1][0] - K[i][0])); cx = lerp(K[i][1], K[i + 1][1], k); cy = lerp(K[i][2], K[i + 1][2], k); }
+  if (p > K[K.length - 1][0]) { cx = K[K.length - 1][1]; cy = K[K.length - 1][2]; }
+  const down = presses.some(x => p > x && p < x + 0.05);
+  el.style.opacity = clamp((p - K[0][0]) * 20); el.style.transform = `translate(${cx}px, ${cy}px) scale(${down ? 0.85 : 1})`;
+}
+// generic rows
+const NAMES = ["Acme Corp", "Northwind", "Fieldstone", "Globex", "Kestrel", "Lumen Labs", "Bluebird", "Harbor & Co", "Pinecrest", "Orbit Inc", "Meridian", "Copperleaf", "Westgate", "Juniper"];
+const STAT = ["Overdue", "Paid", "Overdue", "Pending", "Overdue", "Pending", "Overdue", "Paid", "Paid", "Overdue", "Pending", "Paid", "Paid", "Pending"];
+const cls = s => /overdue|failed|error|blocked/i.test(s) ? "over" : /paid|active|done/i.test(s) ? "paid" : "pend";
+const amt = k => "$" + (((k * 733) % 4200) + 300).toLocaleString("en-US");
+
+// ---------------- scene library ----------------
+// Each builder gets (id, scene) and returns {html, anim(p, t)}. id prefixes every element id.
+const S = {};
+
+// stakes: the hook prop. Visible at frame 0. {value, label, behind: "table"|"buttons"|"dashboard"|"none"}
+S.stakes = (id, s) => {
+  const behind = s.behind || "table";
+  let back = "";
+  if (behind === "table") back = `<div class="card" id="${id}b" style="left:120px;top:640px;width:600px;height:330px;overflow:hidden"><div style="position:absolute;left:0;right:0;top:0;height:60px;background:var(--paper);border-bottom:2px solid var(--line)"></div>${[0,1,2,3].map(i => `<div class="row" style="top:${60 + i * 66}px;height:66px;font-size:28px"><span style="left:30px;top:16px">${NAMES[i]}</span><span class="st ${cls(STAT[i])}" style="left:380px;top:10px !important">${STAT[i]}</span></div>`).join("")}</div>`;
+  if (behind === "buttons") back = `<div class="card" id="${id}b" style="left:110px;top:650px;width:640px;height:320px;padding:30px"><div class="lbl">EDIT INVOICE</div><div class="field"></div><div class="field" style="width:70%"></div><div style="position:absolute;left:30px;bottom:30px;display:flex;gap:12px">${["Cancel", "Delete", "Save"].map(b => `<div style="height:62px;padding:0 24px;border:3px solid var(--ink);border-radius:12px;font-size:28px;font-weight:700;line-height:56px;${b === "Save" ? "background:var(--accent);border-color:var(--accent);color:#fff" : ""}">${b}</div>`).join("")}</div></div>`;
+  if (behind === "dashboard") back = `<div class="card" id="${id}b" style="left:110px;top:640px;width:620px;height:360px;padding:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">${Array.from({ length: 12 }, (_, i) => `<div style="border:2px solid var(--line);border-radius:10px;position:relative;overflow:hidden"><div style="position:absolute;left:10%;right:10%;bottom:12%;height:${20 + (i * 37) % 55}%;background:var(--line);border-radius:4px"></div></div>`).join("")}</div>`;
+  const html = `${back}<div class="card blue" id="${id}n" style="left:470px;top:760px;padding:26px 40px 30px"><div class="huge" style="font-size:${String(s.value).length > 4 ? 170 : 220}px">${esc(s.value)}</div><div class="mono" style="font-size:30px;color:#fff;opacity:0.85;margin-top:6px">${esc(s.label)}</div></div>`;
+  return { html, anim: (p, t) => { const w = Math.sin(t * 3); const b = $(id + "b"); if (b) b.style.transform = `rotate(${-4 + w}deg) translateY(${w * 4}px)`; $(id + "n").style.transform = `rotate(${3 - w * 0.8}deg) scale(${1 + 0.03 * Math.sin(t * 5)})`; } };
+};
+
+// chat: someone dismisses the problem, then a stamp. {role, channel, msg, stamp}
+S.chat = (id, s) => ({
+  html: `<div class="card" id="${id}c" style="left:110px;top:640px;width:820px;padding:40px 44px"><div style="display:flex;align-items:center;gap:22px"><div style="width:84px;height:84px;border-radius:50%;background:var(--tint);display:grid;place-items:center;font-weight:800;font-size:32px;color:var(--accent)">${esc((s.role || "PM").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase())}</div><div><div style="font-size:34px;font-weight:750">${esc(s.role || "Product manager")}</div><div class="mono" style="font-size:26px;color:var(--ink60)">${esc(s.channel || "#design-review")}</div></div></div><div style="margin-top:30px;font-size:54px;font-weight:700;line-height:1.15">${esc(s.msg)}</div></div>` +
+    (s.stamp ? `<div class="card ink big" id="${id}s" style="left:330px;top:980px;padding:30px 54px;font-size:110px;opacity:0">${esc(s.stamp)}</div>` : ""),
+  anim: (p) => { pop($(id + "c"), pr(p, 0, 0.3), { dy: 500, rot: -3 }); const st = $(id + "s"); if (st) { const k = spring(pr(p, 0.6, 0.25)); st.style.opacity = p > 0.6 ? clamp(k * 4) : 0; st.style.transform = `scale(${lerp(1.8, 1, k)}) rotate(-5deg)`; } }
+});
+
+// cards: big word cards tossed in; "strike" crosses some out later. {items:[...], strike:[i...]}
+S.cards = (id, s) => {
+  const it = s.items || [], n = it.length, pos = [[110, 660], [300, 880], [600, 660], [140, 1080], [520, 1060]];
+  const styles = ["blue", "", "ink", "", "blue"];
+  const fs = it.some(w => w.length > 12) ? 60 : 92;
+  return {
+    html: it.map((w, i) => `<div class="card big ${styles[i % 5]}" id="${id}${i}" style="left:${n === 2 ? 96 : pos[i % 5][0]}px;top:${n === 2 ? 680 + i * 260 : pos[i % 5][1]}px;padding:26px 44px;font-size:${fs}px;max-width:888px;opacity:0">${esc(w)}<div id="${id}x${i}" style="position:absolute;left:20px;right:20px;top:50%;height:10px;background:currentColor;transform-origin:left center;transform:scaleX(0)"></div></div>`).join(""),
+    anim: (p) => it.forEach((w, i) => { pop($(id + i), pr(p, 0.05 + i * 0.14, 0.3), { dx: i % 2 ? 600 : -600, dy: 0, rot: [-5, 3, 6, -3, 2][i % 5] });
+      if ((s.strike || []).includes(i)) { $(id + "x" + i).style.transform = `scaleX(${eo(pr(p, 0.55, 0.15))})`; $(id + i).style.opacity = p > 0.7 ? 0.45 : $(id + i).style.opacity; } })
+  };
+};
+
+// table_scroll: rows fly past behind a closed filter. {count, label}
+S.table_scroll = (id, s) => {
+  let r = ""; for (let i = 0; i < 48; i++) { const k = i % 14; r += `<div class="row" style="top:${i * 78}px"><span style="left:40px">${NAMES[k]}</span><span style="left:400px;width:200px;text-align:right">${amt(k)}</span><span class="st ${cls(STAT[k])}" style="left:660px">${STAT[k]}</span></div>`; }
+  return {
+    html: `<div class="card" id="${id}t" style="left:96px;top:620px;width:888px;height:600px;overflow:hidden"><div style="position:absolute;left:0;right:0;top:0;height:80px;background:var(--paper);border-bottom:2px solid var(--line);z-index:2"></div><div style="position:absolute;right:24px;top:14px;padding:8px 22px;border:3px solid var(--line);border-radius:12px;font-size:30px;font-weight:650;background:#fff;z-index:3">Filters &#9662;</div><div id="${id}r" style="position:absolute;left:0;right:0;top:80px">${r}</div></div><div class="card ink" id="${id}k" style="left:480px;top:1130px;padding:20px 30px;font-size:44px;font-weight:800"><span id="${id}n">0</span> ${esc(s.label || "rows scrolled")}</div>`,
+    anim: (p) => { pop($(id + "t"), pr(p, 0, 0.2), { dy: 700, rot: 2 }); const sc = eio(pr(p, 0.15, 0.6)); $(id + "r").style.transform = `translateY(${-sc * 3000}px)`; $(id + "r").style.filter = `blur(${Math.sin(Math.PI * sc) * 6}px)`; pop($(id + "k"), pr(p, 0.2, 0.2), { dx: 300, dy: 0, rot: -4 }); $(id + "n").textContent = Math.round(lerp(0, s.count || 500, sc)); }
+  };
+};
+
+// filter: chips on screen, cursor clicks the first, rows filter down. {chips:[...], keep:"Overdue"}
+S.filter = (id, s) => {
+  const chips = s.chips || ["Overdue", "Owner: me", "This week"], keep = s.keep || "Overdue";
+  const GR = [["Acme Corp", "Overdue"], ["Fieldstone", "Overdue"], ["Globex", "Pending"], ["Kestrel", "Overdue"], ["Lumen Labs", "Pending"]];
+  return {
+    html: `<div class="card" id="${id}g" style="left:96px;top:620px;width:888px;padding:34px;overflow:hidden"><div class="lbl" style="color:var(--accent)">${esc(s.label || "FILTERS ON THE SCREEN")}</div><div style="margin-top:20px;white-space:nowrap">${chips.map((c, i) => `<span class="chip" id="${id}c${i}">${esc(c)}</span>`).join("")}</div><div style="position:relative;margin-top:24px;height:330px">${GR.map((r, i) => `<div class="row" id="${id}r${i}" style="top:${i * 66}px;height:66px;font-size:30px"><span style="left:6px;top:16px">${r[0]}</span><span class="st ${cls(r[1])}" style="left:560px;top:12px !important">${r[1]}</span></div>`).join("")}</div></div>${CURSOR(id + "m")}`,
+    anim: (p) => { pop($(id + "g"), pr(p, 0, 0.25), { dx: 500, dy: 0, rot: 2 }); $(id + "c0").classList.toggle("on", p > 0.55); const fp = eo(pr(p, 0.58, 0.2)); let y = 0;
+      GR.forEach((r, i) => { const k = r[1] === keep, el = $(id + "r" + i); el.style.opacity = k ? 1 : 1 - fp; el.style.top = lerp(i * 66, k ? y * 66 : i * 66, fp) + "px"; if (k) y++; });
+      cursorPath($(id + "m"), p, [[0.22, 980, 1400], [0.5, 200, 745]], [0.52]); }
+  };
+};
+
+// sort: numbers start left-aligned and unsorted, then align right and sort. {}
+S.sort = (id, s) => {
+  const CR = [["Northwind", 860], ["Fieldstone", 4100], ["Acme Corp", 1200], ["Kestrel", 3300], ["Bluebird", 640]];
+  const SO = [...CR.keys()].sort((a, b) => CR[b][1] - CR[a][1]);
+  return {
+    html: `<div class="card" id="${id}c" style="left:96px;top:620px;width:888px;height:560px;overflow:hidden"><div style="position:absolute;left:0;right:0;top:0;height:74px;background:var(--paper);border-bottom:2px solid var(--line)"></div><div class="mono" style="position:absolute;left:40px;top:22px;font-size:26px;color:var(--ink60)">${esc(s.left || "CUSTOMER")}</div><div class="mono" style="position:absolute;right:40px;top:22px;font-size:26px;color:var(--ink60)">${esc(s.right || "AMOUNT")} <span id="${id}a" style="color:var(--accent)"></span></div><div style="position:absolute;left:0;right:0;top:74px">${CR.map((r, i) => `<div class="row" id="${id}r${i}" style="height:96px;font-size:38px"><span style="left:40px;top:28px">${r[0]}</span><span id="${id}v${i}" style="top:26px;font-weight:700;font-variant-numeric:tabular-nums">$${r[1].toLocaleString("en-US")}</span></div>`).join("")}</div></div>`,
+    anim: (p) => { pop($(id + "c"), pr(p, 0, 0.2), { dy: 700, rot: -2 }); const al = eio(pr(p, 0.5, 0.15)), so = eio(pr(p, 0.68, 0.18)); $(id + "a").textContent = p > 0.66 ? "↓" : "";
+      CR.forEach((r, i) => { const a = $(id + "v" + i); a.style.left = lerp(360, 888 - 40 - a.offsetWidth, al) + "px"; a.style.color = p > 0.2 && al < 0.05 ? "var(--ink40)" : "var(--ink)";
+        const el = $(id + "r" + i); el.style.top = lerp(i * 96, SO.indexOf(i) * 96, so) + "px"; el.style.background = SO.indexOf(i) === 0 && so > 0.5 ? "var(--tint)" : "#fff"; }); }
+  };
+};
+
+// bulk: actions hidden in a "..." menu, then select rows and the bulk bar appears. {count_label, actions:[...]}
+S.bulk = (id, s) => {
+  const AR = [["Fieldstone", "$4,100"], ["Kestrel", "$3,300"], ["Acme Corp", "$1,200"], ["Bluebird", "$640"]];
+  const acts = s.actions || ["Export", "Delete"];
+  return {
+    html: `<div class="card" id="${id}c" style="left:96px;top:620px;width:888px;height:540px;overflow:hidden"><div id="${id}b" style="position:absolute;left:24px;right:24px;top:20px;height:78px;background:var(--ink);color:#fff;border-radius:16px;font-size:34px;font-weight:700;display:flex;align-items:center;padding:0 28px;gap:40px;opacity:0"><span id="${id}n">1 selected</span><span style="flex:1"></span>${acts.map((a, i) => `<span style="opacity:${i ? 0.7 : 1}">${esc(a)}</span>`).join("")}</div><div id="${id}m" class="card" style="right:30px;top:24px;padding:10px 22px;font-size:34px;font-weight:800;border-radius:14px;z-index:3">&#8943;</div><div id="${id}rs" style="position:absolute;left:0;right:0;top:120px">${AR.map((r, i) => `<div class="row" id="${id}r${i}" style="top:${i * 100}px;height:100px;font-size:38px"><div class="cb" id="${id}x${i}"></div><span style="left:96px;top:28px">${r[0]}</span><span style="left:560px;top:28px;width:260px;text-align:right;font-weight:700">${r[1]}</span></div>`).join("")}</div></div>${CURSOR(id + "k")}`,
+    anim: (p) => { pop($(id + "c"), pr(p, 0, 0.2), { dy: 700, rot: 2 }); const c1 = p > 0.62, c2 = p > 0.7;
+      $(id + "x0").classList.toggle("on", c1); $(id + "x1").classList.toggle("on", c2); $(id + "r0").style.background = c1 ? "var(--tint)" : "#fff"; $(id + "r1").style.background = c2 ? "var(--tint)" : "#fff";
+      const hot = p > 0.25 && p < 0.6; $(id + "m").style.opacity = c1 ? 0 : 1; $(id + "m").style.borderColor = hot ? "var(--accent)" : "var(--ink)"; $(id + "m").style.color = hot ? "var(--accent)" : "var(--ink)";
+      const b = spring(pr(p, 0.64, 0.2)); $(id + "b").style.opacity = p > 0.64 ? clamp(b * 3) : 0; $(id + "b").style.transform = `translateY(${(1 - b) * -90}px)`; $(id + "n").textContent = c2 ? "2 selected" : "1 selected";
+      $(id + "rs").style.top = lerp(20, 120, eo(pr(p, 0.64, 0.15))) + "px";
+      cursorPath($(id + "k"), p, [[0.12, 1000, 1400], [0.3, 840, 660], [0.5, 840, 660], [0.6, 150, 680], [0.68, 150, 680], [0.74, 150, 780]], [0.3, 0.6, 0.69]); }
+  };
+};
+
+// buttons: a form with an action row. mode "bad": equal buttons side by side and the cursor slips onto the
+// dangerous one; mode "good": the dangerous one moves far left as a quiet text button and a gap opens.
+// {mode, buttons:["Cancel","Delete","Save"], danger:"Delete", primary:"Save", title:"EDIT INVOICE", oops:"Invoice deleted"}
+S.buttons = (id, s) => {
+  const bs = s.buttons || ["Cancel", "Delete", "Save"], danger = s.danger || "Delete", primary = s.primary || bs[bs.length - 1];
+  const good = s.mode === "good";
+  const html = `<div class="card" id="${id}f" style="left:96px;top:620px;width:888px;height:${good ? 560 : 520}px;padding:36px"><div class="lbl">${esc(s.title || "EDIT INVOICE")}</div><div class="field"></div><div class="field" style="width:70%"></div><div class="field" style="width:45%"></div></div>` +
+    bs.map((b, i) => `<div class="btn${b === primary ? " primary" : ""}" id="${id}b${i}">${esc(b)}</div>`).join("") +
+    (good ? `<div id="${id}gap" class="mono" style="position:absolute;top:0;left:0;font-size:26px;color:var(--accent);opacity:0;text-align:center"><div id="${id}gl" style="height:4px;background:var(--accent);margin-bottom:8px"></div>the gap</div>` : `<div class="card ink" id="${id}o" style="left:300px;top:1130px;padding:20px 32px;font-size:38px;font-weight:700;opacity:0">${esc(s.oops || "Invoice deleted")}</div>`) + CURSOR(id + "k");
+  // measured once the fonts are in, so widths are real
+  let L = null;
+  function layout() {
+    const w = bs.map((b, i) => $(id + "b" + i).offsetWidth), y = 620 + (good ? 420 : 380), gapx = 18;
+    const bad = []; let x = 96 + 36; bs.forEach((b, i) => { bad.push([x, y]); x += w[i] + gapx; });
+    const fine = bs.map(() => [0, y]); let rx = 96 + 888 - 36;
+    [...bs.keys()].reverse().forEach(i => { if (bs[i] === danger) return; rx -= w[i]; fine[i] = [rx, y]; rx -= gapx; });
+    const di = bs.indexOf(danger); if (di >= 0) fine[di] = [96 + 20, y];
+    L = { bad, fine, w, y, di, pi: bs.indexOf(primary) };
+  }
+  return { html, anim: (p) => {
+    if (!L) layout();
+    pop($(id + "f"), pr(p, 0, 0.22), { dy: 700, rot: good ? 1 : -1 });
+    const m = good ? eio(pr(p, 0.25, 0.3)) : 0;
+    bs.forEach((b, i) => { const el = $(id + "b" + i), a = L.bad[i], z = L.fine[i]; const appear = eo(pr(p, 0.08 + i * 0.05, 0.2));
+      el.style.opacity = appear; el.style.left = lerp(a[0], z[0], m) + "px"; el.style.top = (L.y + (1 - appear) * 60) + "px";
+      if (good && b === danger) el.classList.toggle("text", m > 0.5);
+      if (!good && b === danger) { const hit = p > 0.55; el.style.background = hit ? "var(--ink)" : "#fff"; el.style.color = hit ? "#fff" : "var(--ink)"; } });
+    if (good) { const g = $(id + "gap"), x0 = L.fine[L.di][0] + L.w[L.di] + 10, x1 = Math.min(...L.fine.filter((_, i) => i !== L.di).map(f => f[0])) - 10;
+      g.style.left = x0 + "px"; g.style.width = (x1 - x0) + "px"; g.style.top = (L.y + 100) + "px"; g.style.opacity = eo(pr(p, 0.6, 0.15)); }
+    else { const o = $(id + "o"); o.style.opacity = p > 0.62 ? 1 : 0; pop(o, pr(p, 0.62, 0.2), { dy: 120, rot: -2 }); }
+    const tgt = good ? L.fine[L.pi] : L.bad[L.pi], dz = L.bad[L.di];
+    if (good) cursorPath($(id + "k"), p, [[0.7, 980, 1400], [0.9, tgt[0] + 40, tgt[1] + 40]], [0.9]);
+    else cursorPath($(id + "k"), p, [[0.2, 980, 1400], [0.45, tgt[0] + 30, tgt[1] + 40], [0.53, dz[0] + 60, dz[1] + 40]], [0.53]);
+  } };
+};
+
+// dialog: a confirm dialog. bad: "Are you sure?" clicked straight through; good: names the object and the consequence.
+// {mode, title, body, cancel, confirm}
+S.dialog = (id, s) => {
+  const good = s.mode === "good";
+  return {
+    html: `<div class="card" id="${id}bg" style="left:96px;top:620px;width:888px;height:520px;background:#fff;opacity:0.6"><div class="lbl" style="margin:36px">INVOICES</div></div><div class="card" id="${id}d" style="left:150px;top:690px;width:780px;padding:44px"><div style="font-size:52px;font-weight:800;letter-spacing:-1px">${esc(s.title || (good ? "Delete invoice INV-1042?" : "Are you sure?"))}</div><div style="font-size:34px;color:var(--ink60);margin-top:16px;line-height:1.3">${esc(s.body || (good ? "The customer loses access to it. This can't be undone." : "This action cannot be undone."))}</div><div style="display:flex;justify-content:flex-end;gap:16px;margin-top:40px"><div class="btn" style="position:relative">${esc(s.cancel || "Cancel")}</div><div class="btn ${good ? "" : "primary"}" id="${id}ok" style="position:relative;${good ? "background:var(--ink);color:#fff" : ""}">${esc(s.confirm || (good ? "Delete invoice" : "OK"))}</div></div></div>${good ? "" : `<div class="card ink" id="${id}o" style="left:200px;top:820px;padding:26px 36px;font-size:44px;font-weight:800;opacity:0">${esc(s.oops || "Deleted. No undo.")}</div>`}${CURSOR(id + "k")}`,
+    anim: (p) => { $(id + "bg").style.opacity = 0.6 * eo(pr(p, 0, 0.15)); pop($(id + "d"), pr(p, 0.05, 0.25), { dy: 200, rot: 0, sc: 0.85, spin: 0 });
+      if (!good) { cursorPath($(id + "k"), p, [[0.2, 980, 1400], [0.4, 780, 1010]], [0.42, 0.47]); if (p > 0.5) $(id + "d").style.opacity = clamp(1 - (p - 0.5) * 8); const o = $(id + "o"); o.style.opacity = p > 0.56 ? 1 : 0; if (p > 0.56) pop(o, pr(p, 0.56, 0.2), { dy: 120, rot: -3 }); }
+      else { const ok = $(id + "ok"); ok.style.boxShadow = p > 0.45 ? `0 0 0 ${6 + 4 * Math.sin(p * 30)}px var(--tint)` : "none"; } }
+  };
+};
+
+// toast: the action happens, a toast with Undo slides in, the cursor clicks Undo and the row comes back. {text, action}
+S.toast = (id, s) => ({
+  html: `<div class="card" id="${id}c" style="left:96px;top:620px;width:888px;height:420px;overflow:hidden">${[0, 1, 2, 3].map(i => `<div class="row" id="${id}r${i}" style="top:${i * 100}px;height:100px;font-size:38px"><span style="left:40px;top:28px">${NAMES[i]}</span><span class="st ${cls(STAT[i])}" style="left:600px;top:28px !important">${STAT[i]}</span></div>`).join("")}</div><div class="card ink" id="${id}t" style="left:96px;top:1080px;width:888px;padding:24px 34px;font-size:38px;font-weight:700;display:flex"><span>${esc(s.text || "Invoice INV-1042 deleted")}</span><span style="flex:1"></span><span id="${id}u" style="color:#A9BDFB;text-decoration:underline;text-underline-offset:6px">${esc(s.action || "Undo")}</span></div>${CURSOR(id + "k")}`,
+  anim: (p) => { pop($(id + "c"), pr(p, 0, 0.2), { dy: 700, rot: 1 }); const gone = eo(pr(p, 0.2, 0.15)) * (1 - eo(pr(p, 0.72, 0.15)));
+    $(id + "r1").style.opacity = 1 - gone; [2, 3].forEach(i => $(id + "r" + i).style.top = (i * 100 - 100 * gone) + "px");
+    const tp = pr(p, 0.3, 0.2); $(id + "t").style.opacity = p > 0.3 && p < 0.8 ? 1 : 0; $(id + "t").style.transform = `translateY(${(1 - spring(tp)) * 140}px)`;
+    cursorPath($(id + "k"), p, [[0.4, 980, 1400], [0.65, 860, 1105]], [0.68]); }
+});
+
+// dashboard: 12 equal charts, then 9 fade and 3 grow, each labelled with the question it answers. {questions:[q1,q2,q3]}
+S.dashboard = (id, s) => {
+  const q = s.questions || ["Who needs me today?", "What changed this week?", "Are we on target?"];
+  const keep = [0, 5, 10];
+  return {
+    html: `<div class="card" id="${id}c" style="left:96px;top:620px;width:888px;height:640px;padding:24px">${Array.from({ length: 12 }, (_, i) => `<div id="${id}t${i}" style="position:absolute;border:2px solid var(--line);border-radius:12px;background:#fff;overflow:hidden"><div style="position:absolute;left:12%;right:12%;bottom:14%;height:${22 + (i * 37) % 55}%;background:${keep.includes(i) ? "var(--accent)" : "var(--line)"};border-radius:4px"></div><div id="${id}q${i}" style="position:absolute;left:18px;top:14px;right:18px;font-size:30px;font-weight:800;opacity:0">${esc(q[keep.indexOf(i)] || "")}</div></div>`).join("")}</div>`,
+    anim: (p) => { pop($(id + "c"), pr(p, 0, 0.2), { dy: 700, rot: -1 }); const k = eio(pr(p, 0.45, 0.25));
+      for (let i = 0; i < 12; i++) { const el = $(id + "t" + i), col = i % 4, row = Math.floor(i / 4), gw = (840 - 36) / 4, gh = (592 - 24) / 3;
+        const a = [24 + col * (gw + 12), 24 + row * (gh + 12), gw, gh]; const ki = keep.indexOf(i); const b = ki >= 0 ? [24, 24 + ki * ((592 - 24) / 3 + 12), 840, (592 - 24) / 3] : a;
+        el.style.left = lerp(a[0], b[0], k) + "px"; el.style.top = lerp(a[1], b[1], k) + "px"; el.style.width = lerp(a[2], b[2], k) + "px"; el.style.height = lerp(a[3], b[3], k) + "px";
+        el.style.opacity = ki >= 0 ? eo(pr(p, 0.05 + i * 0.015, 0.1)) : eo(pr(p, 0.05 + i * 0.015, 0.1)) * (1 - k); if (ki >= 0) $(id + "q" + i).style.opacity = eo(pr(p, 0.68, 0.15)); } }
+  };
+};
+
+// checklist: items tick one by one. {title, items:[...]}
+S.checklist = (id, s) => {
+  const it = s.items || [];
+  return {
+    html: `<div class="card" id="${id}c" style="left:96px;top:620px;width:888px;padding:40px"><div class="lbl" style="color:var(--accent)">${esc(s.title || "BEFORE YOU SHIP")}</div>${it.map((w, i) => `<div id="${id}i${i}" style="position:relative;margin-top:28px;padding-left:76px;font-size:44px;font-weight:700;line-height:1.15;opacity:0"><div class="cb" id="${id}x${i}" style="left:0;top:4px;width:48px;height:48px"></div>${esc(w)}</div>`).join("")}</div>`,
+    anim: (p) => { pop($(id + "c"), pr(p, 0, 0.2), { dy: 700, rot: 1 }); it.forEach((w, i) => { const a = 0.12 + i * (0.75 / Math.max(1, it.length)); $(id + "i" + i).style.opacity = eo(pr(p, a, 0.08)); $(id + "x" + i).classList.toggle("on", p > a + 0.08); }); }
+  };
+};
+
+// bignum: one big accent number card. {value, label, items:[...] optional small cards above}
+S.bignum = (id, s) => ({
+  html: (s.items || []).map((w, i) => `<div class="card" id="${id}s${i}" style="left:${110 + i * 290}px;top:640px;padding:20px 32px;font-size:56px;font-weight:800;opacity:0;${i ? "color:var(--ink40);border-color:var(--ink40);text-decoration:line-through" : ""}">${esc(w)}</div>`).join("") +
+    `<div class="card blue" id="${id}n" style="left:160px;top:${(s.items || []).length ? 820 : 700}px;padding:24px 48px 30px;opacity:0"><div class="huge" style="font-size:${String(s.value).length > 5 ? 170 : 220}px">${esc(s.value)}</div><div class="mono" style="font-size:30px;color:#fff;opacity:0.85;margin-top:6px">${esc(s.label)}</div></div>`,
+  anim: (p) => { (s.items || []).forEach((w, i) => pop($(id + "s" + i), pr(p, i * 0.08, 0.2), { dy: -300, rot: [-4, 3, -2][i % 3] })); const k = spring(pr(p, 0.35, 0.3)); const n = $(id + "n"); n.style.opacity = p > 0.35 ? 1 : 0; n.style.transform = `rotate(-2deg) scale(${lerp(1.6, 1, k)})`; }
+});
+
+// outro: the takeaway in big words, Under_ underlines the last one, then the save line. {words:[...], save, follow}
+S.outro = (id, s) => {
+  const w = s.words || [];
+  const fs = w.some(x => x.length > 9) ? 110 : 140, lh = fs * 1.07;
+  return {
+    html: w.map((x, i) => `<div class="big" id="${id}w${i}" style="position:absolute;left:96px;top:${620 + i * lh}px;font-size:${fs}px;opacity:0">${esc(x)}</div>`).join("") +
+      `<div id="${id}m" style="position:absolute;left:72px;top:${620 + w.length * lh - 30}px;opacity:0"></div><div class="card blue" id="${id}s" style="left:96px;top:${620 + w.length * lh + 120}px;padding:20px 30px;font-size:40px;font-weight:800;max-width:888px;opacity:0">${esc(s.save || "Save this for later")}</div><div class="mono" id="${id}f" style="position:absolute;left:96px;top:${620 + w.length * lh + 240}px;font-size:32px;color:var(--ink60);opacity:0">${esc(s.follow || "follow for more on B2B SaaS design")}</div>`,
+    anim: (p, t) => { w.forEach((x, i) => { const k = spring(pr(p, i * 0.1, 0.3)), el = $(id + "w" + i); el.style.opacity = clamp(k * 3); el.style.transform = `translateX(${(1 - k) * 200}px) scale(${lerp(1.3, 1, k)})`; });
+      const last = $(id + "w" + (w.length - 1)); const lw = last ? last.offsetWidth : 300; const u = eo(pr(p, 0.3, 0.18)); const m = $(id + "m"); m.style.opacity = p > 0.28 ? 1 : 0; m.innerHTML = under({ pose: "underline", t, scale: 0.8, len: 40 + u * (lw / 0.8 - 40) });
+      pop($(id + "s"), pr(p, 0.45, 0.25), { dy: 200, rot: -2 }); $(id + "f").style.opacity = eo(pr(p, 0.6, 0.2)); }
+  };
+};
+
+// ---------------- build the timeline from the spec ----------------
+const LINES = CFG.lines; let acc = CFG.lead == null ? 0 : CFG.lead; const T0 = [];
+LINES.forEach(l => { T0.push(acc); acc += l.dur + (CFG.gap || 0.12); });
+const TOTAL = acc + (CFG.tail || 0.6); window.TOTAL = TOTAL;
+const SC = LINES.map((l, i) => { const sc = l.scene || { type: "cards", items: [] }; const b = S[sc.type]; if (!b) throw new Error("unknown scene type: " + sc.type); return b("s" + i + "_", sc); });
+$("layers").innerHTML = SC.map((s, i) => `<div class="layer" id="L${i}">${s.html}</div>`).join("");
+$("mk").textContent = (CFG.meter && CFG.meter.label) || "TIME LOST / WEEK";
+const UNIT = (CFG.meter && CFG.meter.unit) || "minutes";
+const fmt = m => UNIT === "minutes" ? `${Math.floor(m / 60)}h ${String(Math.round(m % 60)).padStart(2, "0")}m` : Math.round(m).toLocaleString("en-US") + (CFG.meter.suffix || "");
+const fmtAdd = m => UNIT === "minutes" ? (m >= 60 ? `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, "0")}m` : `${m}m`) : m.toLocaleString("en-US") + (CFG.meter.suffix || "");
+const COSTS = LINES.map((l, i) => l.cost ? { t: T0[i] + l.cost[0] * l.dur, m: l.cost[1] } : null).filter(Boolean);
+function meter(t) {
+  let m = 0, bump = 0, last = null;
+  COSTS.forEach(c => { m += c.m * eo(pr(t, c.t, 0.7)); if (t >= c.t && t < c.t + 0.9) { bump = 1 - (t - c.t) / 0.9; last = c; } });
+  $("mv").textContent = fmt(m); $("mv").style.transform = `scale(${1 + 0.25 * Math.sin(bump * Math.PI)})`;
+  const pl = $("plus"); if (last) { const k = (t - last.t) / 0.9; pl.textContent = "+" + fmtAdd(last.m); pl.style.opacity = 1 - k; pl.style.right = (96 + $("mv").offsetWidth * 1.3 + 30) + "px"; pl.style.top = (226 - k * 24) + "px"; } else pl.style.opacity = 0;
+  return bump;
+}
+function phrases(text) {
+  const raw = text.split(" "); let inKey = false;
+  const toks = raw.map(r => { const opens = r.startsWith("*"); const o = { w: r.replace(/\*/g, ""), key: inKey || opens }; if (opens) inKey = true; if (/\*[.,:;!?'"]*$/.test(r)) inKey = false; return o; });
+  const out = []; let cur = [], chars = 0;
+  toks.forEach(o => { cur.push(o); chars += o.w.length + 1; if ((/[.:,?!]$/.test(o.w) && chars > 10) || chars > 28) { out.push(cur); cur = []; chars = 0; } });
+  if (cur.length) out.push(cur); return out;
+}
+const PH = LINES.map((l, i) => i === 0 ? [phrases(l.text).flat()] : phrases(l.text));
+const POSE = LINES.map((l, i) => l.pose !== undefined ? l.pose : (i === LINES.length - 1 ? null : i === 0 ? "shock" : "point"));
+
+function render(t) {
+  $("fill").style.width = (888 * clamp(t / TOTAL)) + "px";
+  let li = 0; T0.forEach((s, i) => { if (t >= s) li = i; });
+  const L = LINES[li], lt = t - T0[li], span = L.dur + (CFG.gap || 0.12), p = clamp(lt / span);
+  for (let i = 0; i < LINES.length; i++) $("L" + i).style.display = i === li ? "block" : "none";
+  const layer = $("L" + li), exitP = li < LINES.length - 1 ? eio(pr(lt, span - 0.2, 0.2)) : 0;
+  layer.style.transform = `translateX(${-exitP * 1200}px) scale(${1 + 0.04 * p}) rotate(${exitP * -4}deg)`;
+  layer.style.filter = exitP > 0 ? `blur(${exitP * 14}px)` : "none";
+  SC[li].anim(p, t);
+  $("section").textContent = "// " + (L.section || "");
+  const bump = meter(t);
+  const ph = PH[li], tot = ph.flat().reduce((a, o) => a + o.w.length + 1, 0), prog = clamp(lt / L.dur);
+  let a0 = 0, pi = ph.length - 1;
+  for (let k = 0; k < ph.length; k++) { const len = ph[k].reduce((a, o) => a + o.w.length + 1, 0); if (prog < (a0 + len) / tot) { pi = k; break; } a0 += len; }
+  let w0 = a0; const first = li === 0;
+  $("head").innerHTML = ph[pi].map(o => { const st = w0 / tot; w0 += o.w.length + 1; const k = first ? 1 : eo(clamp((prog - st) * tot / 4 + 0.35));
+    return `<span class="w${o.key ? " key" : ""}" style="opacity:${0.12 + 0.88 * k};transform:translateY(${(1 - k) * 26}px)">${o.w}</span>`; }).join("");
+  const hd = $("head"); hd.style.fontSize = "86px"; if (hd.offsetHeight > 280) hd.style.fontSize = "72px"; if (hd.offsetHeight > 250) hd.style.fontSize = "62px";   // never runs into the stage
+  hd.style.opacity = (L.scene && L.scene.type === "outro") ? 0 : 1 - exitP * 0.8;
+  const pose = POSE[li], n = $("narr");
+  if (pose && !(L.scene && L.scene.type === "outro")) { n.style.opacity = 1; n.innerHTML = under({ pose: bump > 0 ? "shock" : pose, t, scale: 1.5 }); n.style.transform = `translateY(${-Math.sin(bump * Math.PI) * 40}px)`; }
+  else n.style.opacity = 0;
+}
+window.render = render;
+render(0);
+</script></body></html>

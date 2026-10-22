@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Build one reel from a folder containing spec.json + page.html.
+"""Build one reel from a folder containing spec.json (and, for old hand-coded reels, page.html).
+
+v4 (default): no page.html. Every line in spec.json names a ready-made scene from engine/reel.html:
+  {"slug": "...", "lead": 0, "meter": {"label": "TIME LOST / WEEK", "unit": "minutes"},
+   "lines": [{"text": "...*key*...", "section": "01 of 03 / ...", "cost": [0.5, 120], "pose": "shock",
+              "scene": {"type": "stakes", "value": "6h", "label": "lost every week", "behind": "table"}}, ...]}
+  Scene types: stakes, chat, cards, table_scroll, filter, sort, bulk, buttons, dialog, toast, dashboard, checklist, bignum, outro.
 
 usage: python3 engine/make_reel.py DIR [--mode voice|text] [--preview]
 
@@ -48,7 +54,16 @@ else:
         ln["dur"] = ln.get("dur") or max(1.8, min(4.2, len(ln["text"].split()) * 0.36))
 
 cfg = {"mode": mode, "gap": GAP, "tail": TAIL, "lead": LEAD, "lines": lines}
-src = open(os.path.join(d, "page.html")).read()
+SCENES = {"stakes", "chat", "cards", "table_scroll", "filter", "sort", "bulk", "buttons", "dialog", "toast", "dashboard", "checklist", "bignum", "outro"}
+page = os.path.join(d, "page.html")
+if not os.path.exists(page):
+    page = os.path.join(ENG, "reel.html")
+    for i, ln in enumerate(lines):
+        t = (ln.get("scene") or {}).get("type")
+        if t not in SCENES:
+            sys.exit(f"line {i + 1}: scene type {t!r} is not one of {sorted(SCENES)}")
+    cfg["meter"] = spec.get("meter", {"label": "TIME LOST / WEEK", "unit": "minutes"})
+src = open(page).read().replace("../../engine/", os.path.relpath(ENG, d).replace(os.sep, "/") + "/")
 built = os.path.join(d, f"_built_{mode}.html")
 open(built, "w").write(src.replace("<script>", f"<script>window.CFG={json.dumps(cfg)};</script>\n<script>", 1))
 print(f"{mode}: {sum(l['dur'] for l in lines):.1f}s narration across {len(lines)} lines")
