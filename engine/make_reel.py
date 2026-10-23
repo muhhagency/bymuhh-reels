@@ -54,7 +54,7 @@ else:
         ln["dur"] = ln.get("dur") or max(1.8, min(4.2, len(ln["text"].split()) * 0.36))
 
 cfg = {"mode": mode, "gap": GAP, "tail": TAIL, "lead": LEAD, "lines": lines}
-SCENES = {"stakes", "chat", "cards", "table_scroll", "filter", "sort", "bulk", "buttons", "dialog", "toast", "dashboard", "checklist", "bignum", "outro"}
+SCENES = {"hook", "stakes", "chat", "cards", "table_scroll", "filter", "sort", "bulk", "buttons", "dialog", "toast", "dashboard", "checklist", "bignum", "outro"}
 page = os.path.join(d, "page.html")
 if not os.path.exists(page):
     page = os.path.join(ENG, "reel.html")

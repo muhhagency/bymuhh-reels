@@ -1,0 +1,22 @@
+{
+ "slug": "2026-10-25-settings-page",
+ "voice": "am_michael",
+ "lead": 0,
+ "meter": {"label": "TICKETS / MONTH", "unit": "count", "suffix": ""},
+ "lines": [
+  {"text": "Nobody can *find* this setting.", "pose": "shock",
+   "scene": {"type": "hook", "ui": "settings", "stamp": "Where is it?"}},
+  {"text": "It costs your support team *forty tickets* a month.", "section": "the problem", "pose": "shock",
+   "scene": {"type": "stakes", "value": "40", "label": "tickets / month", "behind": "none"}},
+  {"text": "People look for a *task*. The page is sorted by feature.", "section": "01 of 03 / grouping", "cost": [0.55, 15], "pose": "shrug",
+   "scene": {"type": "cards", "items": ["Integrations", "Advanced", "Turn off emails"], "strike": [0, 1]}},
+  {"text": "Some fields save on their own. Some need *Save.* Nobody knows which.", "section": "02 of 03 / saving", "cost": [0.6, 10], "pose": "shock",
+   "scene": {"type": "cards", "items": ["Saved?", "Not saved?"], "strike": []}},
+  {"text": "And with no *search*, every question becomes a ticket.", "section": "03 of 03 / search", "cost": [0.6, 15], "pose": "point",
+   "scene": {"type": "chat", "role": "Customer", "channel": "#support", "msg": "Where do I turn off email alerts?", "stamp": "Ticket."}},
+  {"text": "Before you ship: group by task, one save rule, add *search.*", "section": "steal this", "pose": "cheer",
+   "scene": {"type": "checklist", "title": "Before you ship settings", "items": ["Group by task", "One save rule", "Add search"]}},
+  {"text": "Save this for your next *settings* review.", "section": "save this",
+   "scene": {"type": "outro", "words": ["Group by task.", "One save rule.", "Add search."], "save": "Save this for your next settings review"}}
+ ]
+}
